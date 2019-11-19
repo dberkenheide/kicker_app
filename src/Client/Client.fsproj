@@ -3,14 +3,20 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\Heading.fs" />
     <None Include="index.html" />
     <None Include="paket.references" />
     <None Include="style.scss" />
     <Compile Include="../Shared/Shared.fs" />
     <Compile Include="Version.fs" />
-    <Compile Include="LoginView.fs" />
-    <Compile Include="MainModel.fs" />
-    <Compile Include="MainMsg.fs" />
+    <Compile Include="Login/LoginModel.fs" />
+    <Compile Include="Login/LoginMsg.fs" />
+    <Compile Include="Login/LoginUpdate.fs" />
+    <Compile Include="Login/LoginView.fs" />
+    <Compile Include="Main/MainModel.fs" />
+    <Compile Include="Main/MainMsg.fs" />
+    <Compile Include="Main/MainUpdate.fs" />
+    <Compile Include="Main/MainView.fs" />
     <Compile Include="Client.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
