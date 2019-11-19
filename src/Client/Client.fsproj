@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Components\Heading.fs" />
+    <Compile Include="Components/Heading.fs" />
     <None Include="index.html" />
     <None Include="paket.references" />
     <None Include="style.scss" />

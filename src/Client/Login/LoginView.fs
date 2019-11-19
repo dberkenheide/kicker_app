@@ -18,6 +18,8 @@ open LoginUpdate
 
 open Custom.Heading
 
+
+
 let column (model : Model) (dispatch : Msg -> unit) =
     Column.column
         [ Column.Width (Screen.All, Column.Is4)
@@ -31,30 +33,28 @@ let column (model : Model) (dispatch : Msg -> unit) =
               form [ ]
                 [ Field.div [ ]
                     [ Control.div [ ]
-                        [ Input.email
+                        [ Input.text
                             [ Input.Size IsLarge
-                              Input.Placeholder "Your Email"
-                              Input.Props [ AutoFocus true ] ] ] ]
+                              Input.Placeholder "Dein Kürzel"
+                              Input.Props [ AutoFocus true ] 
+                              Input.OnChange (fun e -> dispatch (e.Value |> noneWhenEmpty |> UserChanged))] ] ]
                   Field.div [ ]
                     [ Control.div [ ]
                         [ Input.password
                             [ Input.Size IsLarge
-                              Input.Placeholder "Your Password" ] ] ]
-                  Field.div [ ]
-                    [ Checkbox.checkbox [ ]
-                        [ input [ Type "checkbox" ]
-                          str "Remember me" ] ]
+                              Input.Placeholder "Dein Passwort"
+                              Input.OnChange (fun e -> dispatch (e.Value |> noneWhenEmpty |> PasswordChanged))] ] ]
                   Button.button
                     [ Button.Color IsInfo
                       Button.IsFullWidth
-                      Button.CustomClass "is-large is-block" ]
+                      Button.CustomClass "is-large is-block"
+                      Button.OnClick (fun _ -> dispatch LoginClick)
+                      Button.Disabled (hasEmtptyLoginFields model) ]
                     [ str "Login" ] ] ]
           Text.p [ Modifiers [ Modifier.TextColor IsGrey ] ]
-            [ a [ ] [ str "Sign Up" ]
+            [ a [ OnClick (fun _ -> dispatch SignUpClick) ] [ str "Sign Up" ]
               str "\u00A0·\u00A0"
-              a [ ] [ str "Forgot Password" ]
-              str "\u00A0·\u00A0"
-              a [ ] [ str "Need Help?" ] ]
+              a [  OnClick (fun _ -> dispatch ForgotPasswordClick)] [ str "Forgot Password" ] ]
           br [ ]
            ]
 

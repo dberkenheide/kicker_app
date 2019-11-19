@@ -1,4 +1,4 @@
-﻿// Learn more about F# at http://fsharp.org
+// Learn more about F# at http://fsharp.org
 
 open System
 
@@ -6,7 +6,7 @@ open System
 //open canopy.types
 open Expecto
 
-open UITests.Tests
+open ClientTests
 
 
 let startBrowser() =

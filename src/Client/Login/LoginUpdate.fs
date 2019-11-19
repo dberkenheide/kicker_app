@@ -8,4 +8,8 @@ open LoginMsg
 
 let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
     match msg with
-    | Login -> currentModel, Cmd.none
+    | LoginClick -> currentModel, Cmd.none
+    | SignUpClick -> currentModel, Cmd.none
+    | ForgotPasswordClick -> currentModel, Cmd.none
+    | UserChanged userName -> { currentModel with UserName = userName }, Cmd.none
+    | PasswordChanged password -> { currentModel with Password = password }, Cmd.none

@@ -10,5 +10,8 @@ open MainMsg
 // these commands in turn, can dispatch messages to which the update function will react.
 let update (msg : MainMsg) (currentModel :MainModel) : MainModel * Cmd<MainMsg> =
     match msg with
-    | LoginMsg m -> currentModel, Cmd.none 
+    | LoginMsg loginMsg -> 
+        let (newLoginModel, newLoginCmd) = LoginUpdate.update loginMsg currentModel.LoginModel
+        { currentModel with LoginModel = newLoginModel }, Cmd.none
+
     | NOp -> currentModel, Cmd.none

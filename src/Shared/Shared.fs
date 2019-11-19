@@ -1,5 +1,4 @@
-namespace Shared
+module Shared
 
-type Counter = { Value : int }
-
-
+let noneWhenEmpty str =
+    if System.String.IsNullOrWhiteSpace str then None else Some str            

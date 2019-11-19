@@ -1,4 +1,8 @@
 module LoginMsg
 
 type Msg =
-    | Login
+    | LoginClick
+    | SignUpClick
+    | ForgotPasswordClick
+    | UserChanged of string option
+    | PasswordChanged of string option
