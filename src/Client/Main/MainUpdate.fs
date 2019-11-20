@@ -1,7 +1,6 @@
 module MainUpdate
 
 open Elmish
-
 open MainModel
 open MainMsg
 
@@ -11,7 +10,12 @@ open MainMsg
 let update (msg : MainMsg) (currentModel :MainModel) : MainModel * Cmd<MainMsg> =
     match msg with
     | LoginMsg loginMsg -> 
-        let (newLoginModel, newLoginCmd) = LoginUpdate.update loginMsg currentModel.LoginModel
-        { currentModel with LoginModel = newLoginModel }, Cmd.none
+        match loginMsg with        
+        | LoginMsg.LoginSuccess success -> 
+            { currentModel with IsLoggedIn = true }, Cmd.none
 
-    | NOp -> currentModel, Cmd.none
+        | _ ->
+            let (newLoginModel, newLoginCmd) = LoginUpdate.update loginMsg currentModel.LoginModel
+            let cmdNew = Cmd.map LoginMsg newLoginCmd
+
+            { currentModel with LoginModel = newLoginModel }, cmdNew

@@ -31,6 +31,7 @@ open Elmish.HMR
 let init () : MainModel * Cmd<MainMsg> =
     let initialModel = 
         { 
+            IsLoggedIn = false
             LoginModel = { UserName = None; Password = None }
         }
     initialModel, Cmd.none

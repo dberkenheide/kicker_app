@@ -18,25 +18,24 @@ open LoginUpdate
 
 open Custom.Heading
 
-
-
 let column (model : Model) (dispatch : Msg -> unit) =
     Column.column
         [ Column.Width (Screen.All, Column.Is4)
           Column.Offset (Screen.All, Column.Is4) ]
         [
           customH3 "Login"
-          customP "Please login to proceed."
+          customP "Bitte melde dich an."
           Box.box' [ ]
             [ figure [ Class "avatar" ]
                 [ img [ Src "https://placehold.it/128x128" ] ]
-              form [ ]
+              div [ ]
                 [ Field.div [ ]
                     [ Control.div [ ]
                         [ Input.text
                             [ Input.Size IsLarge
                               Input.Placeholder "Dein Kürzel"
-                              Input.Props [ AutoFocus true ] 
+                              Input.Props [ AutoFocus true ]
+                              Input.Value (model.UserName |> Option.defaultWith (fun _ -> ""))
                               Input.OnChange (fun e -> dispatch (e.Value |> noneWhenEmpty |> UserChanged))] ] ]
                   Field.div [ ]
                     [ Control.div [ ]

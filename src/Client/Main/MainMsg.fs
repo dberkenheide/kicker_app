@@ -8,4 +8,3 @@ open MainModel
 
 type MainMsg =
     | LoginMsg of Msg
-    | NOp

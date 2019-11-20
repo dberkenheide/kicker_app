@@ -6,3 +6,5 @@ type Msg =
     | ForgotPasswordClick
     | UserChanged of string option
     | PasswordChanged of string option
+    | LoginSuccess of Shared.LoginResult
+    | LoginFailed of string

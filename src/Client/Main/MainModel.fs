@@ -21,6 +21,7 @@ let initialCounter () = Fetch.fetchAs<int> "/api/init"
 // the initial value will be requested from server
 type MainModel = 
     { 
+        IsLoggedIn: bool
         LoginModel: LoginModel.Model
     }
 

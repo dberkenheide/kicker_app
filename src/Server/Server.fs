@@ -1,12 +1,20 @@
+module ServerCode.Program
+
 open System.IO
+open System
 open System.Threading.Tasks
 
 open Microsoft.AspNetCore.Builder
 open Microsoft.Extensions.DependencyInjection
 open FSharp.Control.Tasks.V2
 open Giraffe
+open Thoth.Json.Giraffe
 open Saturn
+open Saturn.Application
 open Shared
+
+let login credentials =
+    ()
 
 
 let tryGetEnv = System.Environment.GetEnvironmentVariable >> function null | "" -> None | x -> Some x
@@ -17,21 +25,15 @@ let port =
     "SERVER_PORT"
     |> tryGetEnv |> Option.map uint16 |> Option.defaultValue 8085us
 
-let webApp = router {
-    get "/api/init" (fun next ctx ->
-        task {
-            
-            return! json 5 next ctx
-        })
-}
-
 let app = application {
+    use_router (WebServer.webApp "db-String")
     url ("http://0.0.0.0:" + port.ToString() + "/")
-    use_router webApp
-    memory_cache
+    use_jwt_authentication JsonWebToken.secret JsonWebToken.issuer
     use_static publicPath
-    use_json_serializer(Thoth.Json.Giraffe.ThothSerializer())
     use_gzip
 }
-
 run app
+
+    //memory_cache
+    //use_json_serializer(Thoth.Json.Giraffe.ThothSerializer())
+
