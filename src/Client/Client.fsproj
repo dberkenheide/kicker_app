@@ -3,6 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="obj\GroupPhaseMsg.fs" />
     <Compile Include="Components/Heading.fs" />
     <None Include="index.html" />
     <None Include="paket.references" />
@@ -14,6 +15,10 @@
     <Compile Include="Login/LoginMsg.fs" />
     <Compile Include="Login/LoginUpdate.fs" />
     <Compile Include="Login/LoginView.fs" />
+    <Compile Include="GroupPhase\GroupPhaseModel.fs" />
+    <Compile Include="GroupPhase\GroupPhaseMsg.fs" />
+    <Compile Include="GroupPhase\GroupPhaseUpdate.fs" />
+    <Compile Include="GroupPhase\GroupPhaseView.fs" />
     <Compile Include="Main/MainModel.fs" />
     <Compile Include="Main/MainMsg.fs" />
     <Compile Include="Main/MainUpdate.fs" />

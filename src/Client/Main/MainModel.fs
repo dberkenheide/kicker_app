@@ -15,6 +15,11 @@ open Thoth.Json
 
 let initialCounter () = Fetch.fetchAs<int> "/api/init"
 
+type ActivePage =
+    | NoPage
+    | GroupPhase of GroupPhaseModel.Model
+
+
 // The model holds data that you want to keep track of while the application is running
 // in this case, we are keeping track of a counter
 // we mark it as optional, because initially it will not be available from the client
@@ -23,6 +28,7 @@ type MainModel =
     {
         IsLoggedIn: bool
         LoginModel: LoginModel.Model
+        ActivePage: ActivePage
     }
 
 

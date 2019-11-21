@@ -7,4 +7,5 @@ open LoginMsg
 open MainModel
 
 type MainMsg =
-    | LoginMsg of Msg
+    | LoginMsg of LoginMsg.Msg
+    | GroupPhaseMsg of GroupPhaseMsg.Msg

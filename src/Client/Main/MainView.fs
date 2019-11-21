@@ -41,7 +41,11 @@ let view (model : MainModel) (dispatch : MainMsg -> unit) =
     seq {
         if (model.IsLoggedIn) then
             yield getNavbar "LMIS Kicker-App"
-            // Content!
+
+            match model.ActivePage with
+            | GroupPhase gp -> yield (GroupPhaseView.view gp (GroupPhaseMsg >> dispatch))
+            | _ -> ()
+
             yield getFooter ()
         else
             yield getLogin model.LoginModel dispatch

@@ -33,6 +33,7 @@ let init () : MainModel * Cmd<MainMsg> =
         { 
             IsLoggedIn = false
             LoginModel = { UserName = None; Password = None }
+            ActivePage = NoPage
         }
     initialModel, Cmd.none
 
