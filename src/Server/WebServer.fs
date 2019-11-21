@@ -29,10 +29,14 @@ let webApp (str: string) =
             task {
                 let! credentials = ctx.BindJsonAsync<Shared.Credentials>()
 
-                return! if credentials |> Authenticator.validateUserCredentials then
-                            ctx.WriteJsonAsync {UserName=credentials.UserName; Token=JsonWebToken.generateToken credentials.UserName}
-                        else
-                            Response.unauthorized ctx "Bearer" "" (sprintf "User '%s' can't be logged in." credentials.UserName)
+                let user = credentials |> Authenticator.authenticateWithLdap
+
+                return! match user with
+                        | Ok userName -> 
+                            ctx.WriteJsonAsync {UserName=userName; Token=JsonWebToken.generateToken userName}
+
+                        | Error error -> 
+                            ctx.WriteJsonAsync {UserName=error; Token=JsonWebToken.generateToken error}//Response.unauthorized ctx "Bearer" "" error
             })
         forward "" secured
     }

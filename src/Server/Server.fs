@@ -27,10 +27,15 @@ let port =
 
 let app = application {
     use_router (WebServer.webApp "db-String")
-    url ("http://0.0.0.0:" + port.ToString() + "/")
+    url ("http://0.0.0.0:" + port.ToString() + "/")    
     use_jwt_authentication JsonWebToken.secret JsonWebToken.issuer
     use_static publicPath
     use_gzip
+    use_cors "Allow_Configured_Cors" (fun builder ->         
+        builder.AllowAnyMethod() |> ignore
+        builder.AllowAnyOrigin() |> ignore
+        builder.AllowAnyHeader() |> ignore
+        ())
 }
 run app
 

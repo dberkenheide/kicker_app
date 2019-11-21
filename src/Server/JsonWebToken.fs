@@ -26,6 +26,5 @@ let issuer = "lmis_kickerapp"
 let private algorithm = Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256
 
 let generateToken username =
-    [ Claim(JwtRegisteredClaimNames.Sub, username);
-      Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) ]
+    [ Claim(JwtRegisteredClaimNames.Sub, username); Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) ]
     |> Saturn.Auth.generateJWT (secret, algorithm) issuer (DateTime.UtcNow.AddHours(1.0))
