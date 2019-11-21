@@ -9,6 +9,7 @@
     <None Include="style.scss" />
     <Compile Include="../Shared/Shared.fs" />
     <Compile Include="Version.fs" />
+    <Compile Include="ExternalMsg.fs" />
     <Compile Include="Login/LoginModel.fs" />
     <Compile Include="Login/LoginMsg.fs" />
     <Compile Include="Login/LoginUpdate.fs" />

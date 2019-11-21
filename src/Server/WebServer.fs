@@ -21,22 +21,22 @@ let webApp (str: string) =
         not_found_handler (RequestErrors.NOT_FOUND "Page not found")
         get "/api/init" (fun next ctx ->
             task {
-                
+
                 return! json 5 next ctx
             })
-            
+
         post "/api/login" (fun next ctx ->
             task {
                 let! credentials = ctx.BindJsonAsync<Shared.Credentials>()
 
-                let user = credentials |> Authenticator.authenticateWithLdap
+                let user = credentials |> Authenticator.connectDebug //authenticateWithLdap
 
                 return! match user with
-                        | Ok userName -> 
+                        | Ok userName ->
                             ctx.WriteJsonAsync {UserName=userName; Token=JsonWebToken.generateToken userName}
 
-                        | Error error -> 
-                            ctx.WriteJsonAsync {UserName=error; Token=JsonWebToken.generateToken error}//Response.unauthorized ctx "Bearer" "" error
+                        | Error error ->
+                            ctx.WriteJsonAsync {UserName=error; Token=JsonWebToken.generateToken error}
             })
         forward "" secured
     }

@@ -50,12 +50,8 @@ let column (model : Model) (dispatch : Msg -> unit) =
                       Button.OnClick (fun _ -> dispatch LoginClick)
                       Button.Disabled (hasEmtptyLoginFields model) ]
                     [ str "Login" ] ] ]
-          Text.p [ Modifiers [ Modifier.TextColor IsGrey ] ]
-            [ a [ OnClick (fun _ -> dispatch SignUpClick) ] [ str "Sign Up" ]
-              str "\u00A0·\u00A0"
-              a [  OnClick (fun _ -> dispatch ForgotPasswordClick)] [ str "Forgot Password" ] ]
           br [ ]
-           ]
+        ]
 
 let view (model : Model) (dispatch : Msg -> unit) =
     Hero.hero

@@ -19,8 +19,8 @@ let initialCounter () = Fetch.fetchAs<int> "/api/init"
 // in this case, we are keeping track of a counter
 // we mark it as optional, because initially it will not be available from the client
 // the initial value will be requested from server
-type MainModel = 
-    { 
+type MainModel =
+    {
         IsLoggedIn: bool
         LoginModel: LoginModel.Model
     }

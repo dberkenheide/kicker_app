@@ -12,53 +12,38 @@ open Thoth.Json
 open MainModel
 open MainMsg
 
-let getNavbar (model : MainModel) =
-    
-    if model.IsLoggedIn then
-        Navbar.navbar 
-                [ Navbar.Color IsPrimary ]
-                [ Navbar.Item.div [ ]
-                    [ Heading.h2 [ ]
-                        [ str "LMIS Kickerapp" ]
-                    ] 
+let getNavbar title =
+    Navbar.navbar
+            [ Navbar.Color IsPrimary ]
+            [ Navbar.Item.div [ ]
+                [ Heading.h2 [ ]
+                    [ str title ]
                 ]
-        |> Some            
-    else
-        None        
-
-let getLogin (model : MainModel) (dispatch : MainMsg -> unit) =
-    if not model.IsLoggedIn then
-        Container.container 
-            []
-            [ 
-                Content.content [ Content.Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
-                    [ div [ Style [MarginTop 20]] [ LoginView.view model.LoginModel (LoginMsg >> dispatch)] ]
             ]
-        |> Some    
-    else 
-        None    
 
-let getFooter (model : MainModel) =
-    if model.IsLoggedIn then
-        Footer.footer 
-            []
-            [ 
-                Content.content [ Content.Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
-                    [ str "Nix!" ] 
-            ]    
-        |> Some
-    else
-        None    
+let getLogin (model : LoginModel.Model) (dispatch : MainMsg -> unit) =
+    Container.container
+        []
+        [
+            Content.content [ Content.Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
+                [ div [ Style [MarginTop 20]] [ LoginView.view model (LoginMsg >> dispatch)] ]
+        ]
+
+let getFooter () =
+    Footer.footer
+        []
+        [
+            Content.content [ Content.Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
+                [ str "Nix!" ]
+        ]
 
 let view (model : MainModel) (dispatch : MainMsg -> unit) =
-    div 
-        []
-        ([ 
-            getNavbar model
-
-            getLogin model dispatch
-
-            getFooter model
-        ] 
-        |> List.filter (fun o -> o.IsSome)
-        |> List.map (fun o -> o.Value))
+    seq {
+        if (model.IsLoggedIn) then
+            yield getNavbar "LMIS Kicker-App"
+            // Content!
+            yield getFooter ()
+        else
+            yield getLogin model.LoginModel dispatch
+    }
+    |> div []

@@ -42,3 +42,9 @@ let authenticateWithLdap (credentials: Credentials) =
     connection.Disconnect() |> ignore
 
     connectedUser
+
+let connectDebug (credentials: Credentials) =
+    if (credentials.UserName = "Test") && (credentials.Password = "Test") then
+        Ok "Test"
+    else
+        credentials |> authenticateWithLdap
