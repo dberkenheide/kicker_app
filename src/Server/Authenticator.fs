@@ -13,27 +13,27 @@ let connectToLdapWithUserCredentials password (connection :LdapConnection) (resu
 
     if (user |> isNull) then
         Error "Authenticate failed."
-    else   
+    else
         connection.Bind(user.Dn, password)
 
         if (connection.Bound) then
             Ok (user.GetAttribute(samAccountNameAttribute).StringValue)
         else
             Error "Authenticate failed."
-        
+
 let findLdapUserWithGivenUserName username (connection:LdapConnection) =
     let searchFilter = sprintf "(&(objectClass=User)(sAMAccountName=%s))" username
     let searchBase = "ou=users,ou=company,dc=lmis,dc=de"
     let attributes = [|memberOfAttribute; displayNameAttribute; samAccountNameAttribute|]
     connection.Search(searchBase, LdapConnection.ScopeSub, searchFilter, attributes, false)
-    
+
 let authenticateWithLdap (credentials: Credentials) =
     use connection = new LdapConnection()
 
     connection.Connect("192.168.3.74", 389)
     connection.StartTls |> ignore
 
-    connection.Bind("###", "###") |> ignore
+    connection.Bind("XXX", "XXX") |> ignore
 
     let connectedUser = findLdapUserWithGivenUserName credentials.UserName connection
                        |> connectToLdapWithUserCredentials credentials.Password connection
@@ -42,8 +42,3 @@ let authenticateWithLdap (credentials: Credentials) =
     connection.Disconnect() |> ignore
 
     connectedUser
-
-// "ldap": {
-//     "url": "192.168.3.74",
-//     "searchBase": "ou=users,ou=company,dc=lmis,dc=de",
-//     "searchFilter": "(&(objectClass=User)(sAMAccountName={0}))",
