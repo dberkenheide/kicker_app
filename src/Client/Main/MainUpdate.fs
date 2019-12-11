@@ -11,7 +11,7 @@ let private updateExternalMsg externalMsg currentModel =
         currentModel
 
     | LoginSuccess ->
-        { currentModel with IsLoggedIn = true; ActivePage = GroupPhase {Groups=[]} }
+        { currentModel with IsLoggedIn = true; ActivePage = GroupPhase GroupPhaseModel.initialModel }
 
 // The update function computes the next state of the application based on the current state and the incoming events/messages
 // It can also run side-effects (encoded as commands) like calling the server via Http.
@@ -27,14 +27,13 @@ let update (msg : MainMsg) (currentModel :MainModel) : MainModel * Cmd<MainMsg> 
         { newModel with LoginModel = newLoginModel }, newCmd
 
     | GroupPhaseMsg groupMsg, ActivePage.GroupPhase page ->
-        
+
         let (newGroupModel, newLoginCmd, externalMsg) = GroupPhaseUpdate.update groupMsg page
 
         let newCmd = Cmd.map GroupPhaseMsg newLoginCmd
         let newModel = updateExternalMsg externalMsg currentModel
-        
+
         { newModel with ActivePage = GroupPhase newGroupModel }, newCmd
 
     | _ ->
         failwith "Not matched!"
-        
