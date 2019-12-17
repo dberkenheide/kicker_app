@@ -9,3 +9,6 @@ open MainModel
 type MainMsg =
     | LoginMsg of LoginMsg.Msg
     | GroupPhaseMsg of GroupPhaseMsg.Msg
+    //TournamentsMsg
+    | NavigateToGroupPhase
+    | NavigateToTournamentCreation

@@ -19,6 +19,10 @@
     <Compile Include="GroupPhase\GroupPhaseMsg.fs" />
     <Compile Include="GroupPhase\GroupPhaseUpdate.fs" />
     <Compile Include="GroupPhase\GroupPhaseView.fs" />
+    <Compile Include="TournamentCreation\TournamentCreationModel.fs" />
+    <Compile Include="TournamentCreation\TournamentCreationMsg.fs" />
+    <Compile Include="TournamentCreation\TournamentCreationUpdate.fs" />
+    <Compile Include="TournamentCreation\TournamentCreationView.fs" />
     <Compile Include="Main/MainModel.fs" />
     <Compile Include="Main/MainMsg.fs" />
     <Compile Include="Main/MainUpdate.fs" />

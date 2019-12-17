@@ -29,11 +29,12 @@ open Elmish.HMR
 #endif
 
 let init () : MainModel * Cmd<MainMsg> =
-    let initialModel = 
-        { 
+    let initialModel =
+        {
             IsLoggedIn = false
             LoginModel = { UserName = None; Password = None }
-            ActivePage = NoPage
+            GroupPhasePage = None
+            TournamentCreationPage = None
         }
     initialModel, Cmd.none
 
