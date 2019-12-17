@@ -2,13 +2,14 @@
 
 ## Features
 
-- Teamverwaltung
-- Rollenverwaltung
+- Spielerverwaltung
+- Turnierverwaltung
+  - Teamverwaltung
 - Spielplan "zufällig erstellen"
-- Ligamodus
+- Rollenverwaltung
+- Ligamodus/ELO-System
 
 - push-Nachrichten, wenn Spiel ansteht
-- Teams-Integration
 
 ## Rollen
 

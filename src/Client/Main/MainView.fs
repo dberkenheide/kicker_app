@@ -21,12 +21,16 @@ let getNavbar title (dispatch : MainMsg -> unit) =
   Navbar.navbar
     [ Navbar.Color IsPrimary ]
     [
-      Navbar.Item.div
-        [ ]
-        [ Heading.h2 [ ] [ str title ] ]
+      div [ ClassName "navbar-brand"]
+        [
+          a [ ClassName "navbar-item"; Href "https://bulma.io/documentation/components/navbar/" ]
+            [
+              i [ ClassName "far fa-futbol" ] []
+            ]
+        ]
 
       Navbar.Start.div []
-        [ getNavbarTab "Tunier erstellen" "Tunier erstellen" ]
+        [ getNavbarTab "#/tournament" "Tuniere" ]
       Navbar.End.div []
         [ getNavbarTab "Logout" "Logout" ]
     ]
@@ -55,9 +59,10 @@ let view (model : MainModel) (dispatch : MainMsg -> unit) =
         if (model.IsLoggedIn) then
             yield getNavbar "LMIS Kicker-App" dispatch
 
-            //match model.ActivePage with
-            //| GroupPhase gp -> yield (GroupPhaseView.view gp (GroupPhaseMsg >> dispatch))
-            //| _ -> ()
+            yield match model.ActivePage with
+                  | Login -> div [] []
+                  | Tournament -> (TournamentCreationView.view model.TournamentCreationPage (TournamentsMsg >> dispatch))
+                  | Home -> div [] []
 
             yield getFooter ()
         else

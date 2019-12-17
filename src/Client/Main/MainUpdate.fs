@@ -1,6 +1,7 @@
 module MainUpdate
 
 open Elmish
+open Elmish.Navigation
 open MainModel
 open MainMsg
 open ExternalMsg
@@ -37,3 +38,12 @@ let update (msg : MainMsg) (currentModel :MainModel) : MainModel * Cmd<MainMsg> 
 
     | _ ->
         failwith "Not matched!"
+
+
+let urlUpdate (result: Option<Page>) model =
+    match result with
+    | None ->
+        model, Navigation.modifyUrl (toPage model.ActivePage) //cmd.None
+    | Some page ->
+        { model with ActivePage = page }, Cmd.none
+

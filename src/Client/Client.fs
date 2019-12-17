@@ -28,17 +28,19 @@ open Elmish.Debug
 open Elmish.HMR
 #endif
 
-let init () : MainModel * Cmd<MainMsg> =
+let init (pageOption : Page option) : MainModel * Cmd<MainMsg> =
     let initialModel =
         {
             IsLoggedIn = false
+            ActivePage = match pageOption with Some s -> s | None -> Login
             LoginModel = { UserName = None; Password = None }
             GroupPhasePage = None
-            TournamentCreationPage = None
+            TournamentCreationPage = {SelectedTournament = None; Tournaments = []}
         }
     initialModel, Cmd.none
 
 Program.mkProgram init update view
+|> Program.toNavigable (UrlParser.parseHash pageParser) urlUpdate
 #if DEBUG
 |> Program.withConsoleTrace
 #endif
