@@ -12,14 +12,19 @@ $FontPathOpenSans: "~open-sans-fonts/open-sans";
 @import '~open-sans-fonts/open-sans';
 $family-primary: 'Open Sans';
 $primary: #78123b;
+$size-1: 3.75rem;
+$size-2: 3rem;
+$size-3: 2.5rem;
+$size-4: 1.75rem;
+$size-5: 1.5rem;
+$size-6: 1.25rem;
+$size-7: 1rem;
 
 // Bulma
 @import "~bulma/bulma";
 
-html, body {
+html {
   font-family: "Open Sans", serif;
-  font-size: 14px;
-  font-weight: 300;
 }
 
 .hero {
@@ -50,6 +55,11 @@ html, body {
     -webkit-box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
     box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
   }
+}
+
+.mainNavbar {
+  padding-left: 2%;
+  padding-right: 2%;
 }
 
 input {

@@ -19,14 +19,14 @@ let port =
     "SERVER_PORT"
     |> tryGetEnv |> Option.map uint16 |> Option.defaultValue 8085us
 
-let counterApi = {
-    initialCounter = fun () -> async { return { Value = 42 } }
+let (authApi :IAuthApi) = {
+  login = fun login -> async { return { UserName= "Test"; Token= "42" } }
 }
 
 let webApp =
     Remoting.createApi()
     |> Remoting.withRouteBuilder Route.builder
-    |> Remoting.fromValue counterApi
+    |> Remoting.fromValue authApi
     |> Remoting.buildHttpHandler
 
 let app = application {

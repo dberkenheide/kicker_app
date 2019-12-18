@@ -11,99 +11,51 @@ open Thoth.Json
 
 open Shared
 
-// The model holds data that you want to keep track of while the application is running
-// in this case, we are keeping track of a counter
-// we mark it as optional, because initially it will not be available from the client
-// the initial value will be requested from server
-type Model = { Counter: Counter option }
+type PageModel =
+  | NotFoundModel
+  | LoginModel of Login.Model
 
-// The Msg type defines what events/actions can occur while the application is running
-// the state of the application changes *only* in reaction to these events
+type Model = {
+  PageModel : PageModel
+}
+
 type Msg =
-  | Increment
-  | Decrement
-  | InitialCountLoaded of Counter
+  | LoginMsg of Login.Msg
 
-module Server =
+//let initialCounter = ServerApi.api
 
-  open Shared
-  open Fable.Remoting.Client
-
-  /// A proxy you can use to talk to server directly
-  let api : ICounterApi =
-    Remoting.createApi()
-    |> Remoting.withRouteBuilder Route.builder
-    |> Remoting.buildProxy<ICounterApi>
-let initialCounter = Server.api.initialCounter
-
-// defines the initial state and initial command (= side-effect) of the application
 let init () : Model * Cmd<Msg> =
-  let initialModel = { Counter = None }
-  let loadCountCmd =
-    Cmd.OfAsync.perform initialCounter () InitialCountLoaded
-  initialModel, loadCountCmd
+  let initialModel = { PageModel = LoginModel (Login.initModel()) }
+  //let loadCountCmd =
+  //  Cmd.OfAsync.perform initialCounter () InitialCountLoaded
+  initialModel, Cmd.none
 
-// The update function computes the next state of the application based on the current state and the incoming events/messages
-// It can also run side-effects (encoded as commands) like calling the server via Http.
-// these commands in turn, can dispatch messages to which the update function will react.
-let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
-  match currentModel.Counter, msg with
-  | Some counter, Increment ->
-      let nextModel = { currentModel with Counter = Some { Value = counter.Value + 1 } }
-      nextModel, Cmd.none
-  | Some counter, Decrement ->
-      let nextModel = { currentModel with Counter = Some { Value = counter.Value - 1 } }
-      nextModel, Cmd.none
-  | _, InitialCountLoaded initialCount->
-      let nextModel = { Counter = Some initialCount }
-      nextModel, Cmd.none
-  | _ -> currentModel, Cmd.none
+let update (msg: Msg) (model: Model) =
+  match msg, model.PageModel with
+  | _, _ ->
+      model, Cmd.none
 
-let show = function
-  | { Counter = Some counter } -> string counter.Value
-  | { Counter = None   } -> "Loading..."
-
-let column (model : Model) (dispatch : Msg -> unit) =
-    Column.column
-        [ Column.Width (Screen.All, Column.Is4)
-          Column.Offset (Screen.All, Column.Is4) ]
-        [ Heading.h3
-            [ Heading.Modifiers [ Modifier.TextColor IsGrey ] ]
-            [ str "Login" ]
-          Heading.p
-            [ Heading.Modifiers [ Modifier.TextColor IsGrey ] ]
-            [ str "Please login to proceed." ]
-          Box.box' [ ]
-            [ figure [ Class "avatar" ]
-                [ img [ Src "/lmis-ag-logo.svg" ] ]
-              form [ ]
-                [ Field.div [ ]
-                    [ Control.div [ ]
-                        [ Input.email
-                            [ Input.Size IsLarge
-                              Input.Placeholder "Your Email"
-                              Input.Props [ AutoFocus true ] ] ] ]
-                  Field.div [ ]
-                    [ Control.div [ ]
-                        [ Input.password
-                            [ Input.Size IsLarge
-                              Input.Placeholder "Your Password" ] ] ]
-                  br [ ]
-                  Button.button
-                    [ Button.Color IsPrimary
-                      Button.IsFullWidth
-                      Button.CustomClass "is-large is-block" ]
-                    [ str "Login" ] ] ]
-        ]
+let centerStyle direction =
+    Style [ Display DisplayOptions.Flex
+            FlexDirection direction
+            AlignItems AlignItemsOptions.Center
+            JustifyContent "center"
+            Padding "20px 0"
+    ]
 
 let view (model : Model) (dispatch : Msg -> unit) =
-    Hero.hero
-        [ Hero.Color IsSuccess
-          Hero.IsFullHeight ]
-        [ Hero.body [ ]
-            [ Container.container
-                [ Container.Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
-                [ column model dispatch ] ] ]
+  div [] [
+    div [] [
+      Menu.view ()
+    ]
+    div [centerStyle "column" ] [
+      match model.PageModel with
+      | LoginModel loginModel ->
+          yield Login.view loginModel (LoginMsg >> dispatch)
+      | NotFoundModel ->
+          yield div [] [ str "The page is not available." ]
+    ]
+  ]
 
 
 #if DEBUG
