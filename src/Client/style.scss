@@ -11,23 +11,15 @@ $fa_font_path: "~@fortawesome/fontawesome-free/webfonts";
 $FontPathOpenSans: "~open-sans-fonts/open-sans";
 @import '~open-sans-fonts/open-sans';
 $family-primary: 'Open Sans';
+$primary: #78123b;
 
 // Bulma
 @import "~bulma/bulma";
 
-html {
+html, body {
   font-family: "Open Sans", serif;
   font-size: 14px;
-}
-
-nav {
-  padding-left:5%;
-  padding-right:5%;
-}
-
-.main-container{
-  padding-left:5%;
-  padding-right:5%;
+  font-weight: 300;
 }
 
 .hero {
@@ -50,9 +42,11 @@ nav {
   padding-bottom: 20px;
 
   img {
-    padding: 5px;
+    padding: 30px;
     background: #fff;
-    border-radius: 50%;
+    border-radius: 10%;
+    height: 10em;
+    width: auto;
     -webkit-box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
     box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
   }

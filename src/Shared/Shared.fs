@@ -1,17 +1,14 @@
-module Shared
+namespace Shared
 
-type Credentials = {UserName: string; Password: string}
-type LoginResult = {UserName: string; Token: string}
+type Counter = { Value : int }
 
+module Route =
+    /// Defines how routes are generated on server and mapped from client
+    let builder typeName methodName =
+        sprintf "/api/%s/%s" typeName methodName
 
-type Player = Player of string
+/// A type that specifies the communication protocol between client and server
+/// to learn more, read the docs at https://zaid-ajaj.github.io/Fable.Remoting/src/basics.html
+type ICounterApi =
+    { initialCounter : unit -> Async<Counter> }
 
-type Team =
-  {
-    Name: string
-    FirstPlayer: Player
-    SecoundPlayer: Player
-  }
-
-let noneWhenEmpty str =
-    if System.String.IsNullOrWhiteSpace str then None else Some str

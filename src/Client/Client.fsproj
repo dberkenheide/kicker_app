@@ -1,33 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="obj\GroupPhaseMsg.fs" />
-    <Compile Include="Components/Heading.fs" />
-    <None Include="index.html" />
-    <None Include="paket.references" />
-    <None Include="style.scss" />
-    <Compile Include="../Shared/Shared.fs" />
-    <Compile Include="Version.fs" />
-    <Compile Include="ExternalMsg.fs" />
-    <Compile Include="Login/LoginModel.fs" />
-    <Compile Include="Login/LoginMsg.fs" />
-    <Compile Include="Login/LoginUpdate.fs" />
-    <Compile Include="Login/LoginView.fs" />
-    <Compile Include="GroupPhase\GroupPhaseModel.fs" />
-    <Compile Include="GroupPhase\GroupPhaseMsg.fs" />
-    <Compile Include="GroupPhase\GroupPhaseUpdate.fs" />
-    <Compile Include="GroupPhase\GroupPhaseView.fs" />
-    <Compile Include="TournamentCreation\TournamentCreationModel.fs" />
-    <Compile Include="TournamentCreation\TournamentCreationMsg.fs" />
-    <Compile Include="TournamentCreation\TournamentCreationUpdate.fs" />
-    <Compile Include="TournamentCreation\TournamentCreationView.fs" />
-    <Compile Include="Main/MainModel.fs" />
-    <Compile Include="Main/MainMsg.fs" />
-    <Compile Include="Main/MainUpdate.fs" />
-    <Compile Include="Main/MainView.fs" />
-    <Compile Include="Client.fs" />
-  </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <DefineConstants>FABLE_COMPILER</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="index.html" />
+        <None Include="paket.references" />
+        <None Include="style.scss" />
+        <Compile Include="..\Shared\Shared.fs" />
+        <Compile Include="Version.fs" />
+        <Compile Include="Client.fs" />
+    </ItemGroup>
+    <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

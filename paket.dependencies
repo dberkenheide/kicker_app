@@ -5,7 +5,7 @@ group Server
 
     nuget FSharp.Core
     nuget Saturn
-    nuget Thoth.Json.Giraffe
+    nuget Fable.Remoting.Giraffe ~> 3
 
 group Client
     source https://api.nuget.org/v3/index.json
@@ -17,8 +17,8 @@ group Client
     nuget Fable.Elmish.Debugger ~> 3
     nuget Fable.Elmish.HMR ~> 4
     nuget Fable.Elmish.React ~> 3
-    nuget Thoth.Fetch ~> 1
     nuget Fable.React ~> 5
+    nuget Fable.Remoting.Client ~> 5
     nuget Fulma ~> 2
     nuget Fable.FontAwesome.Free ~> 2
 
