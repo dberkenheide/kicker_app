@@ -40,10 +40,10 @@ let update (msg:Msg) model : Model*Cmd<Msg> =
       model, Cmd.none
 
   | SetUserName name ->
-      { model with Login = { model.Login with UserName = name; Password = ""; PasswordId = Guid.NewGuid() } }, Cmd.none
+      { model with Login = { model.Login with UserName = name } }, Cmd.none
 
   | SetPassword pw ->
-      { model with Login = { model.Login with Password = pw }}, Cmd.none
+      { model with Login = { model.Login with Password = pw } }, Cmd.none
 
   | LogInClicked ->
       { model with Running = true },
@@ -53,7 +53,7 @@ let update (msg:Msg) model : Model*Cmd<Msg> =
       { model with Running = false; ErrorMsg = Some exn.Message }, Cmd.none
 
 let view (model : Model) (dispatch : Msg -> unit) =
-  let buttonActive =
+  let buttonIsDisabled () =
       String.IsNullOrEmpty model.Login.UserName ||
       String.IsNullOrEmpty model.Login.Password ||
       model.Running
@@ -62,7 +62,7 @@ let view (model : Model) (dispatch : Msg -> unit) =
     Box.box' [ Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
           [ figure [ Class "avatar" ]
               [ img [ Src "/lmis-ag-logo.svg" ] ]
-            form [ ]
+            div [ ]
               [ Field.div [ ]
                   [ Control.div [ ]
                       [ Input.text
@@ -80,7 +80,8 @@ let view (model : Model) (dispatch : Msg -> unit) =
                 Button.button
                   [ Button.Color IsPrimary
                     Button.IsFullWidth
-                    Button.OnClick (fun _ -> dispatch LogInClicked) ]
+                    Button.OnClick (fun _ -> dispatch LogInClicked)
+                    Button.Disabled (buttonIsDisabled ()) ]
                   [ str "Login" ] ] ]
   ]
 

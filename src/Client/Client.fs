@@ -32,8 +32,16 @@ let init () : Model * Cmd<Msg> =
 
 let update (msg: Msg) (model: Model) =
   match msg, model.PageModel with
-  | _, _ ->
-      model, Cmd.none
+  | LoginMsg msg, LoginModel loginModel ->
+      match msg with
+      | Login.Msg.LoginSuccess newUser ->
+          { model with PageModel = NotFoundModel }, Cmd.none
+
+      | _ ->
+        let newLoginModel, loginCmd = Login.update msg loginModel
+        { model with PageModel = LoginModel newLoginModel }, Cmd.map LoginMsg loginCmd
+
+  | LoginMsg _, _ -> model, Cmd.none
 
 let centerStyle direction =
     Style [ Display DisplayOptions.Flex
