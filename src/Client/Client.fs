@@ -2,6 +2,7 @@ module Client
 
 open Elmish
 open Elmish.React
+open Elmish.UrlParser
 open Fable.FontAwesome
 open Fable.FontAwesome.Free
 open Fable.React
@@ -15,6 +16,27 @@ type PageModel =
   | NotFoundModel
   | LoginModel of Login.Model
 
+[<RequireQualifiedAccess>]
+type Page =
+  | Home
+  | NotFound
+  | Login
+
+let toPath =
+  function
+  | Page.Home -> "/"
+  | Page.Login -> "/login"
+  | Page.NotFound -> "/notfound"
+
+  /// The URL is turned into a Result.
+let pageParser : Parser<Page -> Page, Page> =
+    oneOf
+        [ UrlParser.map Page.Home (UrlParser.s "")
+          UrlParser.map Page.Login (UrlParser.s "login")
+          UrlParser.map Page.NotFound (UrlParser.s "notfound") ]
+
+let urlParser location = parsePath pageParser location
+
 type Model = {
   PageModel : PageModel
 }
@@ -24,8 +46,8 @@ type Msg =
 
 //let initialCounter = ServerApi.api
 
-let init () : Model * Cmd<Msg> =
-  let initialModel = { PageModel = LoginModel (Login.initModel()) }
+let init (page: Page option) : Model * Cmd<Msg> =
+  let initialModel = { PageModel = NotFoundModel }
   //let loadCountCmd =
   //  Cmd.OfAsync.perform initialCounter () InitialCountLoaded
   initialModel, Cmd.none
@@ -42,6 +64,21 @@ let update (msg: Msg) (model: Model) =
         { model with PageModel = LoginModel newLoginModel }, Cmd.map LoginMsg loginCmd
 
   | LoginMsg _, _ -> model, Cmd.none
+
+let urlUpdate (result:Page option) (model:Model) =
+    match result with
+    | None ->
+        model, Cmd.none
+
+    | Some Page.NotFound ->
+        { model with PageModel = NotFoundModel }, Cmd.none
+
+    | Some Page.Login ->
+        let m = Login.initModel()// model.MenuModel.User
+        { model with PageModel = LoginModel m }, Cmd.none
+
+    | Some Page.Home ->
+        { model with PageModel = NotFoundModel }, Cmd.none //Cmd.map HomePageMsg cmd
 
 let centerStyle direction =
     Style [ Display DisplayOptions.Flex
@@ -71,7 +108,10 @@ open Elmish.Debug
 open Elmish.HMR
 #endif
 
+open Elmish.Navigation
+
 Program.mkProgram init update view
+|> Program.toNavigable urlParser urlUpdate
 #if DEBUG
 |> Program.withConsoleTrace
 #endif
