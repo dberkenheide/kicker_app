@@ -1,3 +1,5 @@
+module Server
+
 open System.IO
 open System.Threading.Tasks
 
@@ -6,7 +8,6 @@ open Microsoft.Extensions.DependencyInjection
 open FSharp.Control.Tasks.V2
 open Giraffe
 open Saturn
-open Shared
 
 open Fable.Remoting.Server
 open Fable.Remoting.Giraffe
@@ -19,14 +20,10 @@ let port =
     "SERVER_PORT"
     |> tryGetEnv |> Option.map uint16 |> Option.defaultValue 8085us
 
-let (authApi :IAuthApi) = {
-  login = fun login -> async { return { UserName= "Test"; Token= "42" } }
-}
-
 let webApp =
     Remoting.createApi()
-    |> Remoting.withRouteBuilder Route.builder
-    |> Remoting.fromValue authApi
+    |> Remoting.withRouteBuilder Shared.Apis.Route.builder
+    |> Remoting.fromValue AuthApi.authApi
     |> Remoting.buildHttpHandler
 
 let app = application {

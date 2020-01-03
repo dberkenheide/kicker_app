@@ -4,7 +4,7 @@ open Elmish
 open Fable.React
 open Fable.React.Props
 open Fulma
-open Shared
+open Shared.Dtos
 open System
 open Thoth.Json
 open Fable.Core.JsInterop

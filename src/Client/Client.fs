@@ -10,7 +10,7 @@ open Fable.React.Props
 open Fulma
 open Thoth.Json
 
-open Shared
+open Shared.Dtos
 
 #if DEBUG
 open Elmish.Debug

@@ -6,7 +6,8 @@
     <None Include="index.html" />
     <None Include="paket.references" />
     <None Include="style.scss" />
-    <Compile Include="../Shared/Shared.fs" />
+    <Compile Include="../Shared/Dtos.fs" />
+    <Compile Include="../Shared/Apis.fs" />
     <Compile Include="Version.fs" />
     <Compile Include="CustomStyles.fs" />
     <Compile Include="ServerApi.fs" />

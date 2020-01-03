@@ -8,7 +8,7 @@ open Fable.FontAwesome
 open Fable.FontAwesome.Free
 open Fulma
 
-open Shared
+open Shared.Dtos
 open Routing
 
 type PageModel =
