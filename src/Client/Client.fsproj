@@ -8,8 +8,8 @@
     <None Include="style.scss" />
     <Compile Include="../Shared/Shared.fs" />
     <Compile Include="Version.fs" />
+    <Compile Include="CustomStyles.fs" />
     <Compile Include="ServerApi.fs" />
-    <Compile Include="Views/Menu.fs" />
     <Compile Include="Pages/Login.fs" />
     <Compile Include="Pages/Standing.fs" />
     <Compile Include="Routing.fs" />

@@ -4,6 +4,8 @@ open Elmish
 open Elmish.Navigation
 open Fable.React
 open Fable.React.Props
+open Fable.FontAwesome
+open Fable.FontAwesome.Free
 open Fulma
 
 open Shared
@@ -14,8 +16,11 @@ type PageModel =
   | HomeModel of string
   | LoginModel of Login.Model
   | StandingModel of Standing.Model
+  | RulesModel
 
 type Model = {
+  SelectedTournament: TournamentId option
+  AllTournaments: TournamentId list
   User: UserData option
   PageModel: PageModel
 }
@@ -23,57 +28,10 @@ type Model = {
 type Msg =
   | LoginMsg of Login.Msg
   | StandingMsg of Standing.Msg
+  //Eigene Msgs
+  | TournamentIdSelected of TournamentId
 
-let update (msg: Msg) (model: Model) =
-  let navigateTo p m =
-    m, (p |> toPath |> Navigation.newUrl)
-
-  match msg, model.PageModel with
-  | LoginMsg msg, LoginModel loginModel ->
-      match msg with
-      | Login.Msg.LoginSuccess newUser ->
-          navigateTo Page.Home { model with User = Some newUser }
-
-      | Login.Msg.Intern internMsg ->
-          let newLoginModel, loginCmd = Login.update internMsg loginModel
-          { model with PageModel = LoginModel newLoginModel }, Cmd.map LoginMsg loginCmd
-
-  | LoginMsg _, _ -> model, Cmd.none
-
-  | StandingMsg msg, StandingModel standingModel -> model, Cmd.none
-
-  | StandingMsg _, _ -> model, Cmd.none
-
-let centerStyle direction =
-  Style [ Display DisplayOptions.Flex
-          FlexDirection direction
-          AlignItems AlignItemsOptions.Center
-          JustifyContent "center"
-          Padding "20px 0"
-  ]
-
-let view (model: Model) (dispatch : Msg -> unit) =
-  div [] [
-    div [] [
-      Menu.view model.User
-    ]
-    div [centerStyle "column" ] [
-      match model.PageModel with
-      | LoginModel loginModel ->
-          yield Login.view loginModel (LoginMsg >> dispatch)
-
-      | HomeModel name ->
-          yield div [] [ str name ]
-
-      | StandingModel standingModel ->
-          yield Standing.view standingModel (StandingMsg >> dispatch)
-
-      | NotFoundModel ->
-          yield div [] [ str "The page is not available." ]
-    ]
-  ]
-
-let urlUpdate (result : Page option) (model:Model) =
+let urlUpdate (result: Page option) (model: Model) =
   match result with
   | None ->
       model, Cmd.none
@@ -94,9 +52,146 @@ let urlUpdate (result : Page option) (model:Model) =
 
 let init (page: Page option) : Model * Cmd<Msg> =
   let initialModel = {
+    SelectedTournament = None
+    AllTournaments = [
+      { Name = "Tunier 1"; Id = "42" }
+      { Name = "Tunier 2"; Id = "43" }
+      { Name = "Tunier 3"; Id = "44" }
+    ]
     User = None
     PageModel = NotFoundModel
   }
   //let loadCountCmd =
   //  Cmd.OfAsync.perform initialCounter () InitialCountLoaded
   urlUpdate page initialModel
+
+let update (msg: Msg) (model: Model) =
+  let navigateTo p m =
+    m, (p |> toPath |> Navigation.newUrl)
+
+  match msg, model.PageModel with
+  | LoginMsg msg, LoginModel loginModel ->
+      match msg with
+      | Login.Msg.LoginSuccess newUser ->
+          navigateTo Page.Home { model with User = Some newUser }
+
+      | Login.Msg.Intern internMsg ->
+          let newLoginModel, loginCmd = Login.update internMsg loginModel
+          { model with PageModel = LoginModel newLoginModel }, Cmd.map LoginMsg loginCmd
+
+  | LoginMsg _, _ -> model, Cmd.none
+
+  | StandingMsg msg, StandingModel standingModel ->
+      match msg with
+      | Standing.Msg.Intern internMsg ->
+          let newStandingModel, standingCmd = Standing.update internMsg standingModel
+          { model with PageModel = StandingModel newStandingModel }, Cmd.map StandingMsg standingCmd
+
+  | StandingMsg _, _ -> model, Cmd.none
+
+  | TournamentIdSelected newId, _ ->
+      let m, c =
+        match model.PageModel with
+        | StandingModel _ ->
+            navigateTo (Page.Standing newId.Id) model
+        | _ -> model, Cmd.none
+
+      { m with SelectedTournament = Some newId }, c
+
+let menuView (model: Model) (dispatch : Msg -> unit) =
+  div [] [
+    Navbar.navbar [ Navbar.Color IsPrimary; Navbar.CustomClass "mainNavbar" ] [
+      Navbar.Brand.div [] [
+        Navbar.Item.div [] [
+          Fa.span [ Fa.Solid.Futbol ; Fa.Size Fa.Fa3x ] []
+        ]
+      ]
+
+      Navbar.Start.div [] [
+        yield Navbar.Item.div [ Navbar.Item.HasDropdown; Navbar.Item.IsHoverable ] [
+          Navbar.Link.a [ ] [ strong [] [ str (match model.SelectedTournament with | Some s -> s.Name | None -> "<leer>") ] ]
+          Navbar.Dropdown.div [ ]
+            (model.AllTournaments
+              |>  List.map (fun c ->
+                    Navbar.Item.a
+                      [ Navbar.Item.Props [ OnClick (fun _ -> dispatch (TournamentIdSelected c)) ] ]
+                      [ str c.Name ]
+                  )
+            )
+        ]
+
+        yield Navbar.Item.div [] [
+          Button.button [ Button.Color IsPrimary ] [ Fa.span [ Fa.Solid.Plus ] [ ] ]
+        ]
+
+        match model.SelectedTournament with
+        | Some s ->
+            yield Navbar.Item.a [
+              Navbar.Item.IsTab
+              Navbar.Item.IsActive (match model.PageModel with | StandingModel _ -> true | _ -> false)
+              Navbar.Item.Props [  Href ("#standing/" + s.Id) ]
+            ] [
+              strong [] [ str "Stand" ]
+            ]
+            yield Navbar.Item.a [
+              Navbar.Item.IsTab
+              Navbar.Item.IsActive (match model.PageModel with | RulesModel _ -> true | _ -> false)
+              Navbar.Item.Props [  Href ("#rules/" + s.Id) ]
+            ] [
+              strong [] [ str "Regeln" ]
+            ]
+        | None ->
+            yield Navbar.Item.div [
+              Navbar.Item.IsTab
+              Navbar.Item.IsActive (match model.PageModel with | StandingModel _ -> true | _ -> false)
+            ] [
+              strong [] [ str "Stand" ]
+            ]
+            yield Navbar.Item.div [
+              Navbar.Item.IsTab
+              Navbar.Item.IsActive (match model.PageModel with | RulesModel -> true | _ -> false)
+            ] [
+              strong [] [ str "Regeln" ]
+            ]
+      ]
+
+      Navbar.End.div [] [
+        Navbar.Item.div [] [
+          match model.User with
+          | Some u ->
+              yield u.UserName
+                    |> sprintf "Angemeldet als %s  "
+                    |> str
+              yield Button.a [ Button.IsOutlined; Button.Color IsWhite; Button.Props [ Href "#logout" ] ] [
+                      str "Logout"
+                    ]
+          | None ->
+              yield Button.a [ Button.IsOutlined; Button.Color IsWhite; Button.Props [ Href "#login" ] ] [
+                      str "Login"
+                    ]
+        ]
+      ]
+    ]
+  ]
+
+let view (model: Model) (dispatch : Msg -> unit) =
+  div [] [
+    (menuView model dispatch)
+    div [ CustomStyles.centerStyle "column" ] [
+      match model.PageModel with
+      | LoginModel loginModel ->
+          yield Login.view loginModel (LoginMsg >> dispatch)
+
+      | HomeModel name ->
+          yield div [] [ str name ]
+
+      | StandingModel standingModel ->
+          yield Standing.view standingModel (StandingMsg >> dispatch)
+
+      | RulesModel ->
+          yield div [] [ str "Regeln!" ]
+
+      | NotFoundModel ->
+          yield div [] [ str "The page is not available." ]
+    ]
+  ]
