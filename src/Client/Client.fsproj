@@ -11,6 +11,7 @@
     <Compile Include="ServerApi.fs" />
     <Compile Include="Views/Menu.fs" />
     <Compile Include="Pages/Login.fs" />
+    <Compile Include="Pages/Standing.fs" />
     <Compile Include="Routing.fs" />
     <Compile Include="MainView.fs" />
     <Compile Include="Client.fs" />

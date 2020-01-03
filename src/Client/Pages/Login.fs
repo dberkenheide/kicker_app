@@ -25,11 +25,12 @@ type Msg =
   | Intern of InternMsg
   | LoginSuccess of UserData
 
-let initModel () = {
+let initModel () : Model * Cmd<Msg> =
+  {
     Login = { UserName = ""; Password = ""; PasswordId = Guid.Empty }
     Running = false
     ErrorMsg = None
-  }
+  }, Cmd.none
 
 let authUser (login: Login) =
   ServerApi.auth.login login

@@ -13,6 +13,7 @@ type PageModel =
   | NotFoundModel
   | HomeModel of string
   | LoginModel of Login.Model
+  | StandingModel of Standing.Model
 
 type Model = {
   User: UserData option
@@ -21,6 +22,7 @@ type Model = {
 
 type Msg =
   | LoginMsg of Login.Msg
+  | StandingMsg of Standing.Msg
 
 let update (msg: Msg) (model: Model) =
   let navigateTo p m =
@@ -37,6 +39,10 @@ let update (msg: Msg) (model: Model) =
           { model with PageModel = LoginModel newLoginModel }, Cmd.map LoginMsg loginCmd
 
   | LoginMsg _, _ -> model, Cmd.none
+
+  | StandingMsg msg, StandingModel standingModel -> model, Cmd.none
+
+  | StandingMsg _, _ -> model, Cmd.none
 
 let centerStyle direction =
   Style [ Display DisplayOptions.Flex
@@ -59,6 +65,9 @@ let view (model: Model) (dispatch : Msg -> unit) =
       | HomeModel name ->
           yield div [] [ str name ]
 
+      | StandingModel standingModel ->
+          yield Standing.view standingModel (StandingMsg >> dispatch)
+
       | NotFoundModel ->
           yield div [] [ str "The page is not available." ]
     ]
@@ -73,11 +82,15 @@ let urlUpdate (result : Page option) (model:Model) =
       { model with PageModel = NotFoundModel }, Cmd.none
 
   | Some Page.Login ->
-      let m = Login.initModel()// model.MenuModel.User
-      { model with PageModel = LoginModel m }, Cmd.none
+      let m, c = Login.initModel ()
+      { model with PageModel = LoginModel m }, c |> Cmd.map LoginMsg
 
   | Some Page.Home ->
       { model with PageModel = HomeModel "Can GET/Home" }, Cmd.none //Cmd.map HomePageMsg cmd
+
+  | Some (Page.Standing s) ->
+      let m, c = Standing.initModel s
+      { model with PageModel = StandingModel m }, c |> Cmd.map LoginMsg
 
 let init (page: Page option) : Model * Cmd<Msg> =
   let initialModel = {
