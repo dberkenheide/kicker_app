@@ -2,11 +2,13 @@ module Menu
 
 open Fulma
 open Fable.React
+open Fable.React.Props
 open Fable.FontAwesome
 open Fable.FontAwesome.Free
 
+open Shared
 
-let view () =
+let view (user: UserData option) =
   let choices = [ "Item 1"; "Item 2"; "Item 3" ]
 
   Navbar.navbar [ Navbar.Color IsPrimary; Navbar.CustomClass "mainNavbar" ] [
@@ -26,14 +28,29 @@ let view () =
         Button.button [ Button.Color IsPrimary ] [ Fa.span [ Fa.Solid.Plus ] [ ] ]
       ]
 
-      Navbar.Item.a [ Navbar.Item.IsTab; Navbar.Item.IsActive true ] [ strong [] [ str "Stand" ] ]
+      Navbar.Item.a [ Navbar.Item.IsTab; Navbar.Item.IsActive true ] [
+        strong [] [ str "Stand" ]
+      ]
 
-      Navbar.Item.a [ Navbar.Item.IsTab; Navbar.Item.IsActive false] [ strong [] [ str "Regeln" ] ]
+      Navbar.Item.a [ Navbar.Item.IsTab; Navbar.Item.IsActive false] [
+        strong [] [ str "Regeln" ]
+      ]
     ]
 
     Navbar.End.div [] [
       Navbar.Item.div [] [
-        Button.button [ Button.IsOutlined; Button.Color IsWhite ] [ str "Logout" ]
+        match user with
+        | Some u ->
+            yield u.UserName
+                  |> sprintf "Angemeldet als %s  "
+                  |> str
+            yield Button.a [ Button.IsOutlined; Button.Color IsWhite; Button.Props [ Href "#logout" ] ] [
+                    str "Logout"
+                  ]
+        | None ->
+            yield Button.a [ Button.IsOutlined; Button.Color IsWhite; Button.Props [ Href "#login" ] ] [
+                    str "Login"
+                  ]
       ]
     ]
   ]
