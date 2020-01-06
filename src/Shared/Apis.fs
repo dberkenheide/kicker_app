@@ -9,5 +9,9 @@ module Route =
       sprintf "/api/%s/%s" typeName methodName
 
 type IAuthApi = {
-  login : Login -> Async<UserData>
+  login: Login -> Async<UserData>
+}
+
+type ITournamentApi = {
+  createNewTournament: NewTournament -> Async<OpenTournament>
 }
