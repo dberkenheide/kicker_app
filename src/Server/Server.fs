@@ -17,18 +17,25 @@ let tryGetEnv = System.Environment.GetEnvironmentVariable >> function null | "" 
 let publicPath = Path.GetFullPath "../Client/public"
 
 let port =
-    "SERVER_PORT"
-    |> tryGetEnv |> Option.map uint16 |> Option.defaultValue 8085us
+  "SERVER_PORT"
+  |> tryGetEnv |> Option.map uint16 |> Option.defaultValue 8085us
 
-let webApp =
-    Remoting.createApi()
-    |> Remoting.withRouteBuilder Shared.Apis.Route.builder
-    |> Remoting.fromValue AuthApi.authApi
-    |> Remoting.buildHttpHandler
+let authApp =
+  Remoting.createApi()
+  |> Remoting.withRouteBuilder Shared.Apis.Route.builder
+  |> Remoting.fromValue AuthApi.authApi
+  |> Remoting.buildHttpHandler
+
+let tournamentApp =
+  Remoting.createApi()
+  |> Remoting.withRouteBuilder Shared.Apis.Route.builder
+  |> Remoting.fromValue TournamentApi.tournamentApi
+  |> Remoting.buildHttpHandler
 
 let app = application {
     url ("http://0.0.0.0:" + port.ToString() + "/")
-    use_router webApp
+    use_router authApp
+    use_router tournamentApp
     memory_cache
     use_static publicPath
     use_gzip

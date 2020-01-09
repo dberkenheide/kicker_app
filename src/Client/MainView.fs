@@ -32,6 +32,7 @@ type Msg =
   | CreationMsg of TournamentCreation.Msg
   //Eigene Msgs
   | TournamentIdSelected of TournamentId
+  | NewOpenTournament of OpenTournament
 
 let urlUpdate (result: Page option) (model: Model) =
   match result with
@@ -102,8 +103,7 @@ let update (msg: Msg) (model: Model) =
           { model with PageModel = CreationModel newCreationModel }, Cmd.map CreationMsg creationCmd
 
       | TournamentCreation.NewTournamentCreated newTournament ->
-          navigateTo (Page.Standing "42") model
-
+          model, Cmd.OfAsync.perform ServerApi.tournament.createNewTournament newTournament NewOpenTournament
 
   | CreationMsg _, _ -> model, Cmd.none
 
@@ -116,7 +116,12 @@ let update (msg: Msg) (model: Model) =
 
       { m with SelectedTournament = Some newId }, c
 
-let menuView (model: Model) (dispatch : Msg -> unit) =
+  | NewOpenTournament openTournament, _ ->
+      let newIds = [ { Name = openTournament.Title; Id = openTournament.Id } ]
+
+      { model with AllTournaments = List.concat [ model.AllTournaments; newIds ]; SelectedTournament = Some newIds.[0] }, Cmd.none
+
+let menuView (model: Model) (dispatch: Msg -> unit) =
   div [] [
     Navbar.navbar [ Navbar.Color IsPrimary; Navbar.CustomClass "mainNavbar" ] [
       Navbar.Brand.div [] [
