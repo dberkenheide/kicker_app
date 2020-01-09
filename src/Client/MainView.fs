@@ -16,6 +16,7 @@ type PageModel =
   | HomeModel of string
   | LoginModel of Login.Model
   | StandingModel of Standing.Model
+  | CreationModel of  TournamentCreation.Model
   | RulesModel
 
 type Model = {
@@ -28,6 +29,7 @@ type Model = {
 type Msg =
   | LoginMsg of Login.Msg
   | StandingMsg of Standing.Msg
+  | CreationMsg of TournamentCreation.Msg
   //Eigene Msgs
   | TournamentIdSelected of TournamentId
 
@@ -49,6 +51,10 @@ let urlUpdate (result: Page option) (model: Model) =
   | Some (Page.Standing s) ->
       let m, c = Standing.initModel s
       { model with PageModel = StandingModel m }, c |> Cmd.map LoginMsg
+
+  | Some (Page.CreateNew) ->
+      let m, c = TournamentCreation.initModel ()
+      { model with PageModel = CreationModel m }, c |> Cmd.map CreationMsg
 
 let init (page: Page option) : Model * Cmd<Msg> =
   let initialModel = {
@@ -89,6 +95,18 @@ let update (msg: Msg) (model: Model) =
 
   | StandingMsg _, _ -> model, Cmd.none
 
+  | CreationMsg msg, CreationModel creationModel ->
+      match msg with
+      | TournamentCreation.Intern internMsg ->
+          let newCreationModel, creationCmd = TournamentCreation.update internMsg creationModel
+          { model with PageModel = CreationModel newCreationModel }, Cmd.map CreationMsg creationCmd
+
+      | TournamentCreation.NewTournamentCreated newTournament ->
+          navigateTo (Page.Standing "42") model
+
+
+  | CreationMsg _, _ -> model, Cmd.none
+
   | TournamentIdSelected newId, _ ->
       let m, c =
         match model.PageModel with
@@ -121,7 +139,7 @@ let menuView (model: Model) (dispatch : Msg -> unit) =
         ]
 
         yield Navbar.Item.div [] [
-          Button.button [ Button.Color IsPrimary ] [ Fa.span [ Fa.Solid.Plus ] [ ] ]
+          Button.a [ Button.Color IsPrimary; Button.Props [ Href (Page.CreateNew |> toPath) ] ] [ Fa.span [ Fa.Solid.Plus ] [ ] ]
         ]
 
         match model.SelectedTournament with
@@ -129,7 +147,7 @@ let menuView (model: Model) (dispatch : Msg -> unit) =
             yield Navbar.Item.a [
               Navbar.Item.IsTab
               Navbar.Item.IsActive (match model.PageModel with | StandingModel _ -> true | _ -> false)
-              Navbar.Item.Props [  Href ("#standing/" + s.Id) ]
+              Navbar.Item.Props [  Href (Page.Standing s.Id |> toPath) ]
             ] [
               strong [] [ str "Stand" ]
             ]
@@ -166,7 +184,7 @@ let menuView (model: Model) (dispatch : Msg -> unit) =
                       str "Logout"
                     ]
           | None ->
-              yield Button.a [ Button.IsOutlined; Button.Color IsWhite; Button.Props [ Href "#login" ] ] [
+              yield Button.a [ Button.IsOutlined; Button.Color IsWhite; Button.Props [ Href (Page.Login |> toPath) ] ] [
                       str "Login"
                     ]
         ]
@@ -187,6 +205,9 @@ let view (model: Model) (dispatch : Msg -> unit) =
 
       | StandingModel standingModel ->
           yield Standing.view standingModel (StandingMsg >> dispatch)
+
+      | CreationModel creationModel ->
+          yield TournamentCreation.view creationModel (CreationMsg >> dispatch)
 
       | RulesModel ->
           yield div [] [ str "Regeln!" ]

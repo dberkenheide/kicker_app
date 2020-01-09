@@ -6,6 +6,7 @@
     <None Include="index.html" />
     <None Include="paket.references" />
     <None Include="style.scss" />
+    <Compile Include="../Shared/ResultBuilder.fs" />
     <Compile Include="../Shared/Dtos.fs" />
     <Compile Include="../Shared/Apis.fs" />
     <Compile Include="Version.fs" />
@@ -13,6 +14,7 @@
     <Compile Include="ServerApi.fs" />
     <Compile Include="Pages/Login.fs" />
     <Compile Include="Pages/Standing.fs" />
+    <Compile Include="Pages/TournamentCreation.fs" />
     <Compile Include="Routing.fs" />
     <Compile Include="MainView.fs" />
     <Compile Include="Client.fs" />

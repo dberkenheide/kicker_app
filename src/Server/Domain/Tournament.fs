@@ -1,7 +1,6 @@
 module Tournament
 open System
 
-
 type TournamentId = TournamentId of Guid
 type String50 = String50 of String
 let createString50 (inputString : string) =
