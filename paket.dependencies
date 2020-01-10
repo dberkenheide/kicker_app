@@ -3,6 +3,7 @@ group Server
     framework: netcoreapp3.0
     storage: none
 
+nuget Dapper
     nuget FSharp.Core
     nuget Saturn
     nuget Fable.Remoting.Giraffe ~> 3
@@ -32,4 +33,3 @@ group Build
     nuget Fake.Core.Target
     nuget Fake.DotNet.Cli
     nuget Fake.IO.FileSystem
-

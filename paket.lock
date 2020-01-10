@@ -786,6 +786,8 @@ STORAGE: NONE
 RESTRICTION: == netcoreapp3.0
 NUGET
   remote: https://api.nuget.org/v3/index.json
+    Dapper (2.0.30)
+      System.Reflection.Emit.Lightweight (>= 4.6)
     Fable.Remoting.Giraffe (3.10)
       Fable.Remoting.Json (>= 2.5)
       Fable.Remoting.Server (>= 4.9)
