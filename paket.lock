@@ -1,3 +1,5 @@
+
+
 GROUP Build
 STORAGE: NONE
 RESTRICTION: == netstandard2.0
@@ -1030,6 +1032,11 @@ NUGET
     Microsoft.AspNetCore.WebUtilities (2.2)
       Microsoft.Net.Http.Headers (>= 2.2)
       System.Text.Encodings.Web (>= 4.5)
+    Microsoft.Data.Sqlite (3.1)
+      Microsoft.Data.Sqlite.Core (>= 3.1)
+      SQLitePCLRaw.bundle_e_sqlite3 (>= 2.0.2)
+    Microsoft.Data.Sqlite.Core (3.1)
+      SQLitePCLRaw.core (>= 2.0.2)
     Microsoft.Extensions.Caching.Abstractions (3.0)
       Microsoft.Extensions.Primitives (>= 3.0)
     Microsoft.Extensions.Caching.Memory (3.0)
@@ -1146,6 +1153,15 @@ NUGET
       Microsoft.AspNetCore.WebSockets (>= 2.2)
       Microsoft.Extensions.Caching.Memory (>= 2.2)
       System.Threading.Tasks.Dataflow (>= 4.9)
+    SQLitePCLRaw.bundle_e_sqlite3 (2.0.2)
+      SQLitePCLRaw.core (>= 2.0.2)
+      SQLitePCLRaw.lib.e_sqlite3 (>= 2.0.2)
+      SQLitePCLRaw.provider.dynamic_cdecl (>= 2.0.2)
+    SQLitePCLRaw.core (2.0.2)
+      System.Memory (>= 4.5.3)
+    SQLitePCLRaw.lib.e_sqlite3 (2.0.2)
+    SQLitePCLRaw.provider.dynamic_cdecl (2.0.2)
+      SQLitePCLRaw.core (>= 2.0.2)
     System.Buffers (4.5)
     System.Collections (4.3)
       Microsoft.NETCore.Platforms (>= 1.1)

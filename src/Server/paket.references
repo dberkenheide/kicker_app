@@ -3,3 +3,4 @@ FSharp.Core
 Saturn
 Fable.Remoting.Giraffe
 Dapper
+Microsoft.Data.Sqlite

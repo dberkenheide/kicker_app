@@ -3,8 +3,9 @@ group Server
     framework: netcoreapp3.0
     storage: none
 
-nuget Dapper
+    nuget Dapper
     nuget FSharp.Core
+    nuget Microsoft.Data.Sqlite
     nuget Saturn
     nuget Fable.Remoting.Giraffe ~> 3
 
