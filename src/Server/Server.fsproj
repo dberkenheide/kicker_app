@@ -8,6 +8,8 @@
     <Compile Include="../Shared/ResultBuilder.fs" />
     <Compile Include="../Shared/Dtos.fs" />
     <Compile Include="../Shared/Apis.fs" />
+    <Compile Include="DataAccess/ReadModels.fs" />
+    <Compile Include="DataAccess/WriteModels.fs" />
     <Compile Include="Domain/Tournament.fs" />
     <Compile Include="Apis/AuthApi.fs" />
     <Compile Include="Apis/TournamentApi.fs" />

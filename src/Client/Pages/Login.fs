@@ -27,7 +27,7 @@ type Msg =
 
 let initModel () : Model * Cmd<Msg> =
   {
-    Login = { UserName = ""; Password = ""; PasswordId = Guid.Empty }
+    Login = { UserName = ""; Password = "" }
     Running = false
     ErrorMsg = None
   }, Cmd.none
@@ -81,28 +81,3 @@ let view (model: Model) (dispatch: Msg -> unit) =
                     Button.Disabled (buttonIsDisabled model) ]
                   [ str "Login" ] ] ]
   ]
-
-  // Column.column
-  //     [ Column.Width (Screen.All, Column.IsOneThird) ]
-  //     [ Box.box' [ Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
-  //         [ figure [ Class "avatar" ]
-  //             [ img [ Src "/lmis-ag-logo.svg" ] ]
-  //           form [ ]
-  //             [ Field.div [ ]
-  //                 [ Control.div [ ]
-  //                     [ Input.email
-  //                         [ Input.Size IsLarge
-  //                           Input.Placeholder "Dein Kürzel"
-  //                           Input.Props [ AutoFocus true ] ] ] ]
-  //               Field.div [ ]
-  //                 [ Control.div [ ]
-  //                     [ Input.password
-  //                         [ Input.Size IsLarge
-  //                           Input.Placeholder "Dein Passwort" ] ] ]
-  //               br [ ]
-  //               Button.button
-  //                 [ Button.Color IsPrimary
-  //                   Button.IsFullWidth
-  //                   Button.Disabled (not buttonActive) ]
-  //                 [ str "Login" ] ] ]
-  //       ]

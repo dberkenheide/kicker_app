@@ -5,12 +5,12 @@ open System
 type Login = {
   UserName: string
   Password: string
-  PasswordId: Guid
 }
 
-type TournamentId = {
-  Name: string
-  Id: string
+[<CLIMutable>]
+type TournamentForDropDown = {
+  Title: string
+  Id: int
 }
 
 type JWT = string
@@ -26,7 +26,7 @@ type NewTournament = {
 }
 
 type Player = {
-  PlayerId: string
+  PlayerId: int
   Abbreviation: string
 }
 
@@ -36,7 +36,7 @@ type Team = {
 }
 
 type OpenTournament = {
-  Id: string
+  Id: int
   Title: string
   StartDate: DateTime
   Teams: Team list

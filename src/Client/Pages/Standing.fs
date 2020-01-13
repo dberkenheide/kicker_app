@@ -9,7 +9,7 @@ open System
 open Thoth.Json
 
 type Model = {
-    ModelId: string
+    ModelId: int
   }
 
 type InternMsg =
@@ -30,5 +30,5 @@ let update (msg: InternMsg) model : Model * Cmd<Msg> =
 
 let view (model: Model) (dispatch: Msg -> unit) =
   strong [] [
-    str model.ModelId
+    model.ModelId |> string |> str
   ]

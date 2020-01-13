@@ -1,8 +1,10 @@
 module Tournament
 open System
 
-type TournamentId = TournamentId of Guid
+type TournamentId = TournamentId of int
+
 type String50 = String50 of String
+
 let createString50 (inputString : string) =
   if inputString.Length > 50 then
     None
@@ -11,11 +13,11 @@ let createString50 (inputString : string) =
 
 type NewTournament = {
   TournamentId: TournamentId
-  Name: String50
+  Title: String50
   StartDate : DateTime
 }
 
-type PlayerId = PlayerId of Guid
+type PlayerId = PlayerId of int
 
 type Player = {
   PlayerId: PlayerId
@@ -39,4 +41,3 @@ type ParseNewTournamentDto = Shared.Dtos.NewTournament -> Result<NewTournament, 
 type CreateTournament = NewTournament -> Result<TorunamentInCreationPhase, TeamCreationError>
 
 type AddTeam = TorunamentInCreationPhase -> Team -> Result<TorunamentInCreationPhase, TeamCreationError>
-

@@ -2,6 +2,7 @@ namespace Shared.Apis
 
 open System
 open Shared.Dtos
+open System.Data
 
 module Route =
   /// Defines how routes are generated on server and mapped from client
@@ -14,4 +15,5 @@ type IAuthApi = {
 
 type ITournamentApi = {
   createNewTournament: NewTournament -> Async<OpenTournament>
+  getAllTournaments: unit -> Async<TournamentForDropDown list>
 }

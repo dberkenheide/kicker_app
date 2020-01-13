@@ -20,8 +20,8 @@ type PageModel =
   | RulesModel
 
 type Model = {
-  SelectedTournament: TournamentId option
-  AllTournaments: TournamentId list
+  SelectedTournament: TournamentForDropDown option
+  AllTournaments: TournamentForDropDown list
   User: UserData option
   PageModel: PageModel
 }
@@ -31,7 +31,8 @@ type Msg =
   | StandingMsg of Standing.Msg
   | CreationMsg of TournamentCreation.Msg
   //Eigene Msgs
-  | TournamentIdSelected of TournamentId
+  | TournamentsLoaded of TournamentForDropDown list
+  | TournamentSelected of TournamentForDropDown
   | NewOpenTournament of OpenTournament
 
 let urlUpdate (result: Page option) (model: Model) =
@@ -60,17 +61,22 @@ let urlUpdate (result: Page option) (model: Model) =
 let init (page: Page option) : Model * Cmd<Msg> =
   let initialModel = {
     SelectedTournament = None
-    AllTournaments = [
-      { Name = "Tunier 1"; Id = "42" }
-      { Name = "Tunier 2"; Id = "43" }
-      { Name = "Tunier 3"; Id = "44" }
-    ]
+    AllTournaments = [ ]
     User = None
     PageModel = NotFoundModel
   }
-  //let loadCountCmd =
-  //  Cmd.OfAsync.perform initialCounter () InitialCountLoaded
-  urlUpdate page initialModel
+
+  let loadAllTournaments () = async {
+    let! tournaments = ServerApi.tournament.getAllTournaments ()
+    return tournaments
+  }
+
+  let loadTournamentsCmd =
+    Cmd.OfAsync.perform loadAllTournaments () TournamentsLoaded
+
+  let model, cmd = urlUpdate page initialModel
+
+  model, Cmd.batch [ cmd; loadTournamentsCmd ]
 
 let update (msg: Msg) (model: Model) =
   let navigateTo p m =
@@ -107,7 +113,7 @@ let update (msg: Msg) (model: Model) =
 
   | CreationMsg _, _ -> model, Cmd.none
 
-  | TournamentIdSelected newId, _ ->
+  | TournamentSelected newId, _ ->
       let m, c =
         match model.PageModel with
         | StandingModel _ ->
@@ -117,9 +123,12 @@ let update (msg: Msg) (model: Model) =
       { m with SelectedTournament = Some newId }, c
 
   | NewOpenTournament openTournament, _ ->
-      let newIds = [ { Name = openTournament.Title; Id = openTournament.Id } ]
+      let newIds = [ { Title = openTournament.Title; Id = openTournament.Id } ]
 
       { model with AllTournaments = List.concat [ model.AllTournaments; newIds ]; SelectedTournament = Some newIds.[0] }, Cmd.none
+
+  | TournamentsLoaded newTournamtes, _ ->
+      { model with AllTournaments = newTournamtes }, Cmd.none
 
 let menuView (model: Model) (dispatch: Msg -> unit) =
   div [] [
@@ -132,13 +141,13 @@ let menuView (model: Model) (dispatch: Msg -> unit) =
 
       Navbar.Start.div [] [
         yield Navbar.Item.div [ Navbar.Item.HasDropdown; Navbar.Item.IsHoverable ] [
-          Navbar.Link.a [ ] [ strong [] [ str (match model.SelectedTournament with | Some s -> s.Name | None -> "<leer>") ] ]
+          Navbar.Link.a [ ] [ strong [] [ str (match model.SelectedTournament with | Some s -> s.Title | None -> "<leer>") ] ]
           Navbar.Dropdown.div [ ]
             (model.AllTournaments
               |>  List.map (fun c ->
                     Navbar.Item.a
-                      [ Navbar.Item.Props [ OnClick (fun _ -> dispatch (TournamentIdSelected c)) ] ]
-                      [ str c.Name ]
+                      [ Navbar.Item.Props [ OnClick (fun _ -> dispatch (TournamentSelected c)) ] ]
+                      [ str c.Title ]
                   )
             )
         ]
@@ -159,7 +168,7 @@ let menuView (model: Model) (dispatch: Msg -> unit) =
             yield Navbar.Item.a [
               Navbar.Item.IsTab
               Navbar.Item.IsActive (match model.PageModel with | RulesModel _ -> true | _ -> false)
-              Navbar.Item.Props [  Href ("#rules/" + s.Id) ]
+              Navbar.Item.Props [  Href ("#rules/" + s.Id.ToString()) ]
             ] [
               strong [] [ str "Regeln" ]
             ]

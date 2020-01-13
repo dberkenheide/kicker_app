@@ -9,7 +9,7 @@ type Page =
   | NotFound
   | Login
   | CreateNew
-  | Standing of String
+  | Standing of int
 
 let toPath =
   function
@@ -17,7 +17,7 @@ let toPath =
   | Page.Login -> "#login"
   | Page.NotFound -> "#not-found"
   | Page.CreateNew -> "#create-new"
-  | Page.Standing uid -> "#standing/" + (uid)
+  | Page.Standing uid -> "#standing/" + (uid.ToString())
 
 /// The URL is turned into a Result.
 let pageParser: Parser<Page -> Page, Page> =
@@ -27,7 +27,7 @@ let pageParser: Parser<Page -> Page, Page> =
     map Page.Login (s "login")
     map Page.CreateNew (s "create-new")
     map Page.NotFound (s "notfound")
-    map Page.Standing (s "standing" </> str)
+    map Page.Standing (s "standing" </> i32)
   ]
 
 let urlParser location =
