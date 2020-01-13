@@ -13,12 +13,13 @@ let createNewTournament (connection: IDbConnection) (newTournament : NewTourname
       StartDate = newTournament.StartDate
   }
 
-  let sql = "insert into Tournament (Title, StartDate) values (@Title, @StartDate)";
+  let sql = "insert into Tournament (Title, StartDate) values (@Title, @StartDate); SELECT LAST_INSERT_ID();";
 
-  let! newId = Async.AwaitTask(connection.ExecuteAsync(sql, tournament))
+  let! newId = Async.AwaitTask(connection.ExecuteScalarAsync(sql, tournament))
+  let id = (newId :?> UInt64 |> int)
 
   return {
-    Id = newId
+    Id = id
     Title = tournament.Title
     StartDate = tournament.StartDate
     Teams = []

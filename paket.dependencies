@@ -6,6 +6,7 @@ group Server
     nuget Dapper
     nuget FSharp.Core
     nuget Microsoft.Data.Sqlite
+nuget MySqlConnector
     nuget Saturn
     nuget Fable.Remoting.Giraffe ~> 3
 

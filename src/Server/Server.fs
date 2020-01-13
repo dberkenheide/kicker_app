@@ -12,6 +12,7 @@ open Microsoft.Data.Sqlite
 
 open Fable.Remoting.Server
 open Fable.Remoting.Giraffe
+open MySql.Data.MySqlClient
 
 let tryGetEnv = System.Environment.GetEnvironmentVariable >> function null | "" -> None | x -> Some x
 
@@ -19,33 +20,34 @@ let publicPath = Path.GetFullPath "../Client/public"
 
 let dbPath = Path.GetFullPath "../Database"
 
-let connectionString =  @"Filename=C:\repos\BrainTeaser\kicker_app\src\Database\kickerApp.db"//" + Path.Combine [| dbPath; "kickerApp.db" |]
-
-let connection = new SqliteConnection(connectionString)
+//let connectionString =  @"Filename=" + Path.Combine [| dbPath; "kickerApp.db" |]
+let connectionString = "server=localhost;userid=kickerapp_db;database=kickerapp_db;Pwd=kickerapp_db;Port=3306" //  @"Filename=" + Path.Combine [| dbPath; "kickerApp.db" |]
 
 let port =
   "SERVER_PORT"
   |> tryGetEnv |> Option.map uint16 |> Option.defaultValue 8085us
 
-let authApp =
+let authApp connection =
   Remoting.createApi()
   |> Remoting.withRouteBuilder Shared.Apis.Route.builder
   |> Remoting.fromValue AuthApi.authApi
   |> Remoting.buildHttpHandler
 
-let tournamentApp =
+let tournamentApp connection =
   Remoting.createApi()
   |> Remoting.withRouteBuilder Shared.Apis.Route.builder
   |> Remoting.fromValue (TournamentApi.createTournamentApi connection)
   |> Remoting.buildHttpHandler
 
-let app = application {
+let app connection = application {
     url ("http://0.0.0.0:" + port.ToString() + "/")
-    use_router authApp
-    use_router tournamentApp
+    use_router (authApp connection)
+    use_router (tournamentApp connection)
     memory_cache
     use_static publicPath
     use_gzip
 }
 
-run app
+do
+  use connection = new MySqlConnection(connectionString)
+  run (app connection)
