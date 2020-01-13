@@ -7,6 +7,7 @@
     <None Include="paket.references" />
     <None Include="style.scss" />
     <Compile Include="../Shared/ResultBuilder.fs" />
+    <Compile Include="../Shared/Result.fs" />
     <Compile Include="../Shared/Dtos.fs" />
     <Compile Include="../Shared/Apis.fs" />
     <Compile Include="Version.fs" />
