@@ -16,6 +16,7 @@
     <Compile Include="Pages/Login.fs" />
     <Compile Include="Pages/Standing.fs" />
     <Compile Include="Pages/TournamentCreation.fs" />
+    <Compile Include="Pages/TournamentPreparation.fs" />
     <Compile Include="Routing.fs" />
     <Compile Include="MainView.fs" />
     <Compile Include="Client.fs" />

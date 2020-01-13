@@ -16,7 +16,8 @@ type PageModel =
   | HomeModel of string
   | LoginModel of Login.Model
   | StandingModel of Standing.Model
-  | CreationModel of  TournamentCreation.Model
+  | CreationModel of TournamentCreation.Model
+  | PreparationModel of TournamentPreparation.Model
   | RulesModel
 
 type Model = {
@@ -26,11 +27,14 @@ type Model = {
   PageModel: PageModel
 }
 
+// Alle Messages die auftreten können
 type Msg =
+  // Messages der eingehängten Models
   | LoginMsg of Login.Msg
   | StandingMsg of Standing.Msg
   | CreationMsg of TournamentCreation.Msg
-  //Eigene Msgs
+  | PreaparationMsg of TournamentPreparation.Msg
+  // Eigene Msgs
   | TournamentsLoaded of TournamentForDropDown list
   | TournamentSelected of TournamentForDropDown
   | NewOpenTournament of OpenTournament
@@ -57,6 +61,10 @@ let urlUpdate (result: Page option) (model: Model) =
   | Some (Page.CreateNew) ->
       let m, c = TournamentCreation.initModel ()
       { model with PageModel = CreationModel m }, c |> Cmd.map CreationMsg
+      
+  | Some (Page.Preparation s) ->
+      let m, c = TournamentPreparation.initModel s
+      { model with PageModel = PreparationModel m }, c |> Cmd.map LoginMsg
 
 let init (page: Page option) : Model * Cmd<Msg> =
   let initialModel = {
@@ -102,6 +110,14 @@ let update (msg: Msg) (model: Model) =
 
   | StandingMsg _, _ -> model, Cmd.none
 
+  | PreaparationMsg msg, PreparationModel preparationModel ->
+      match msg with
+      | TournamentPreparation.Msg.Intern internMsg ->
+          let preparationModel, preparationCmd = TournamentPreparation.update internMsg preparationModel
+          { model with PageModel = PreparationModel preparationModel }, Cmd.map PreaparationMsg preparationCmd
+
+  | PreaparationMsg _, _ -> model, Cmd.none
+
   | CreationMsg msg, CreationModel creationModel ->
       match msg with
       | TournamentCreation.Intern internMsg ->
@@ -118,6 +134,8 @@ let update (msg: Msg) (model: Model) =
         match model.PageModel with
         | StandingModel _ ->
             navigateTo (Page.Standing newId.Id) model
+        | PreparationModel _ ->
+            navigateTo (Page.Preparation newId.Id) model
         | _ -> model, Cmd.none
 
       { m with SelectedTournament = Some newId }, c
@@ -164,6 +182,13 @@ let menuView (model: Model) (dispatch: Msg -> unit) =
               Navbar.Item.Props [  Href (Page.Standing s.Id |> toPath) ]
             ] [
               strong [] [ str "Stand" ]
+            ]
+            yield Navbar.Item.a [
+              Navbar.Item.IsTab
+              Navbar.Item.IsActive (match model.PageModel with | PreparationModel _ -> true | _ -> false)
+              Navbar.Item.Props [  Href (Page.Preparation s.Id |> toPath) ]
+            ] [
+              strong [] [ str "Vorbereitung" ]
             ]
             yield Navbar.Item.a [
               Navbar.Item.IsTab
@@ -219,6 +244,9 @@ let view (model: Model) (dispatch : Msg -> unit) =
 
       | StandingModel standingModel ->
           yield Standing.view standingModel (StandingMsg >> dispatch)
+
+      | PreparationModel preparationModel ->
+          yield TournamentPreparation.view preparationModel (PreaparationMsg >> dispatch)        
 
       | CreationModel creationModel ->
           yield TournamentCreation.view creationModel (CreationMsg >> dispatch)
