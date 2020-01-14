@@ -8,11 +8,11 @@ open Microsoft.Extensions.DependencyInjection
 open FSharp.Control.Tasks.V2
 open Giraffe
 open Saturn
-open Microsoft.Data.Sqlite
+
+open SqlProvider
 
 open Fable.Remoting.Server
 open Fable.Remoting.Giraffe
-open MySql.Data.MySqlClient
 
 let tryGetEnv = System.Environment.GetEnvironmentVariable >> function null | "" -> None | x -> Some x
 
@@ -20,28 +20,26 @@ let publicPath = Path.GetFullPath "../Client/public"
 
 let dbPath = Path.GetFullPath "../Database"
 
-//let connectionString =  @"Filename=" + Path.Combine [| dbPath; "kickerApp.db" |]
-let connectionString = "server=localhost;userid=kickerapp_db;database=kickerapp_db;Pwd=kickerapp_db;Port=3306" //  @"Filename=" + Path.Combine [| dbPath; "kickerApp.db" |]
-
 let port =
   "SERVER_PORT"
   |> tryGetEnv |> Option.map uint16 |> Option.defaultValue 8085us
 
-let createApi connection =
+let createApi (ctx) =
   Remoting.createApi()
   |> Remoting.withRouteBuilder Shared.Apis.Route.builder
-  |> Remoting.fromValue (Api.createApi connection)
+  |> Remoting.fromValue (Api.createApi ctx)
   |> Remoting.buildHttpHandler
 
 
-let app connection = application {
+let app (ctx) = application {
     url ("http://0.0.0.0:" + port.ToString() + "/")
-    use_router (createApi connection)
+    use_router (createApi ctx)
     memory_cache
     use_static publicPath
     use_gzip
 }
 
 do
-  use connection = new MySqlConnection(connectionString)
-  run (app connection)
+  let ctx = SqlProvider.ctx
+
+  run (app ctx)

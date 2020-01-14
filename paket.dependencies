@@ -5,10 +5,12 @@ group Server
 
     nuget Dapper
     nuget FSharp.Core
+    nuget FSharp.Data.SqlClient
     nuget Microsoft.Data.Sqlite
-nuget MySqlConnector
+    nuget MySqlConnector
     nuget Saturn
     nuget Fable.Remoting.Giraffe ~> 3
+    nuget SQLProvider
 
 group Client
     source https://api.nuget.org/v3/index.json

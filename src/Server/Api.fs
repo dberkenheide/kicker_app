@@ -4,39 +4,47 @@ open System
 open Shared.Dtos
 open Shared.Apis
 open System.Data
-open Dapper
-open WriteModels
+open SqlProvider
+open FSharp.Data.Sql
 
-let createNewTournament (connection: IDbConnection) (newTournament : NewTournament) : Async<OpenTournament> = async {
-  let (tournament: Tournament) = {
-      Title = newTournament.Title
-      StartDate = newTournament.StartDate
-  }
+let createNewTournament (ctx: Dbo) (newTournament : NewTournament) : Async<OpenTournament> = async {  
+  let addedTournament = ctx.Dbo.Tournament.``Create(StartDate, Title)`` (newTournament.StartDate, newTournament.Title)
 
-  let sql = "insert into Tournament (Title, StartDate) values (@Title, @StartDate); SELECT LAST_INSERT_ID();";
-
-  let! newId = Async.AwaitTask(connection.ExecuteScalarAsync(sql, tournament))
-  let id = (newId :?> UInt64 |> int)
+  do! ctx.SubmitUpdatesAsync()
 
   return {
-    Id = id
-    Title = tournament.Title
-    StartDate = tournament.StartDate
+    Id = addedTournament.Id
+    Title = addedTournament.Title
+    StartDate = addedTournament.StartDate
     Teams = []
   }
 }
 
-let getAllTournaments (connection: IDbConnection) (): Async<TournamentForDropDown list> = async {
-  let select = "select Title, Id from Tournament";
+let getAllTournaments (ctx: Dbo) (): Async<TournamentForDropDown list> = async {  
+  let! tournamentQuery =
+    query {
+      for t in ctx.Dbo.Tournament do
+      sortBy t.StartDate
+      select { Title = t.Title; Id= t.Id }
+    } |> Seq.executeQueryAsync
 
-  let! ids = Async.AwaitTask(connection.QueryAsync<TournamentForDropDown>(select))
-
-  return List.ofSeq ids
+  return List.ofSeq tournamentQuery
 }
 
-let createApi (connection: IDbConnection): IApi = {
+let getAllPlayers (ctx: Dbo) (): Async<Player list> = async {
+  let! playerQuery =
+    query {
+      for p in ctx.Dbo.Player do
+      sortBy p.Abbreviation
+      select { PlayerId = p.Id; Abbreviation = p.Abbreviation }
+    } |> Seq.executeQueryAsync
+    
+  return List.ofSeq playerQuery
+}
+
+let createApi ctx: IApi = {
   login = fun login -> async { return { UserName= "Test"; Token= "42" } }
-  createNewTournament = createNewTournament connection
-  getAllTournaments = getAllTournaments connection
-  getAllPlayers = (fun () -> async { return [ { PlayerId = 1; Abbreviation = "ABC" }] })
+  createNewTournament = createNewTournament ctx
+  getAllTournaments = getAllTournaments ctx
+  getAllPlayers = getAllPlayers ctx
 }

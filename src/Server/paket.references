@@ -5,3 +5,6 @@ Fable.Remoting.Giraffe
 Dapper
 Microsoft.Data.Sqlite
 MySqlConnector
+SQLProvider
+System.Data.SQLClient
+FSharp.Data.SqlClient
