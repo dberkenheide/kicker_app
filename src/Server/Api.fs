@@ -42,8 +42,16 @@ let getAllPlayers (ctx: Dbo) (): Async<Player list> = async {
   return List.ofSeq playerQuery
 }
 
+let getUserData (ctx: Dbo) login: Async<UserData> = async {
+  match (Ldap.authenticateWithLdap login) with
+  | Ok name ->
+      return { UserName = name; Token= "42" }
+  | Error err ->
+      return { UserName = err; Token= "42" }
+}
+
 let createApi ctx: IApi = {
-  login = fun login -> async { return { UserName= "Test"; Token= "42" } }
+  login = getUserData ctx
   createNewTournament = createNewTournament ctx
   getAllTournaments = getAllTournaments ctx
   getAllPlayers = getAllPlayers ctx

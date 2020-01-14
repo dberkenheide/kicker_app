@@ -16,6 +16,8 @@
     <Compile Include="../Shared/Result.fs" />
     <Compile Include="../Shared/Dtos.fs" />
     <Compile Include="../Shared/Apis.fs" />
+    <Compile Include="Constants.fs" />
+    <Compile Include="Ldap.fs" />
     <Compile Include="SqlProvider.fs" />
     <Compile Include="Tournament.fs" />
     <Compile Include="Api.fs" />

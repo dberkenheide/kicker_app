@@ -8,3 +8,4 @@ MySqlConnector
 SQLProvider
 System.Data.SQLClient
 FSharp.Data.SqlClient
+Novell.Directory.Ldap.NETStandard

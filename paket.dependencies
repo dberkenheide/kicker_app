@@ -8,6 +8,7 @@ group Server
     nuget FSharp.Data.SqlClient
     nuget Microsoft.Data.Sqlite
     nuget MySqlConnector
+nuget Novell.Directory.Ldap.NETStandard 3.0.0-beta6 beta
     nuget Saturn
     nuget Fable.Remoting.Giraffe ~> 3
     nuget SQLProvider
