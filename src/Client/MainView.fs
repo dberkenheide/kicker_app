@@ -64,7 +64,7 @@ let urlUpdate (result: Page option) (model: Model) =
       
   | Some (Page.Preparation s) ->
       let m, c = TournamentPreparation.initModel s
-      { model with PageModel = PreparationModel m }, c |> Cmd.map LoginMsg
+      { model with PageModel = PreparationModel m }, c |> Cmd.map PreaparationMsg
 
 let init (page: Page option) : Model * Cmd<Msg> =
   let initialModel = {
@@ -75,7 +75,7 @@ let init (page: Page option) : Model * Cmd<Msg> =
   }
 
   let loadAllTournaments () = async {
-    let! tournaments = ServerApi.tournament.getAllTournaments ()
+    let! tournaments = ServerApi.api.getAllTournaments ()
     return tournaments
   }
 
@@ -125,7 +125,7 @@ let update (msg: Msg) (model: Model) =
           { model with PageModel = CreationModel newCreationModel }, Cmd.map CreationMsg creationCmd
 
       | TournamentCreation.NewTournamentCreated newTournament ->
-          model, Cmd.OfAsync.perform ServerApi.tournament.createNewTournament newTournament NewOpenTournament
+          model, Cmd.OfAsync.perform ServerApi.api.createNewTournament newTournament NewOpenTournament
 
   | CreationMsg _, _ -> model, Cmd.none
 
@@ -148,7 +148,38 @@ let update (msg: Msg) (model: Model) =
   | TournamentsLoaded newTournamtes, _ ->
       { model with AllTournaments = newTournamtes }, Cmd.none
 
-let menuView (model: Model) (dispatch: Msg -> unit) =
+
+type TabInfo = {
+  Page: Page option
+  Label: string
+  IsActive: bool
+}
+
+let menuView (model: Model) (dispatch: Msg -> unit) = 
+  let toTab tabInfo =
+    Navbar.Item.a [
+        yield Navbar.Item.IsTab
+        yield Navbar.Item.IsActive tabInfo.IsActive
+        match tabInfo.Page with
+        | Some p ->
+            yield Navbar.Item.Props [ Href (p |> toPath) ]
+        | None -> ()          
+      ] [
+        strong [] [ str tabInfo.Label ]
+      ]
+
+  let mapPage pageConstructor = model.SelectedTournament |> Option.map (fun s -> pageConstructor s.Id)
+
+  let tabInfos = [
+    { Page = mapPage Page.Preparation
+      Label = "Vorbereitung"
+      IsActive = (match model.PageModel with | PreparationModel _ -> true | _ -> false) }
+
+    { Page = mapPage Page.Standing
+      Label = "Stand"
+      IsActive = (match model.PageModel with | StandingModel _ -> true | _ -> false) }
+  ]    
+  
   div [] [
     Navbar.navbar [ Navbar.Color IsPrimary; Navbar.CustomClass "mainNavbar" ] [
       Navbar.Brand.div [] [
@@ -174,42 +205,15 @@ let menuView (model: Model) (dispatch: Msg -> unit) =
           Button.a [ Button.Color IsPrimary; Button.Props [ Href (Page.CreateNew |> toPath) ] ] [ Fa.span [ Fa.Solid.Plus ] [ ] ]
         ]
 
-        match model.SelectedTournament with
-        | Some s ->
-            yield Navbar.Item.a [
-              Navbar.Item.IsTab
-              Navbar.Item.IsActive (match model.PageModel with | StandingModel _ -> true | _ -> false)
-              Navbar.Item.Props [  Href (Page.Standing s.Id |> toPath) ]
-            ] [
-              strong [] [ str "Stand" ]
-            ]
-            yield Navbar.Item.a [
-              Navbar.Item.IsTab
-              Navbar.Item.IsActive (match model.PageModel with | PreparationModel _ -> true | _ -> false)
-              Navbar.Item.Props [  Href (Page.Preparation s.Id |> toPath) ]
-            ] [
-              strong [] [ str "Vorbereitung" ]
-            ]
-            yield Navbar.Item.a [
-              Navbar.Item.IsTab
-              Navbar.Item.IsActive (match model.PageModel with | RulesModel _ -> true | _ -> false)
-              Navbar.Item.Props [  Href ("#rules/" + s.Id.ToString()) ]
-            ] [
-              strong [] [ str "Regeln" ]
-            ]
-        | None ->
-            yield Navbar.Item.div [
-              Navbar.Item.IsTab
-              Navbar.Item.IsActive (match model.PageModel with | StandingModel _ -> true | _ -> false)
-            ] [
-              strong [] [ str "Stand" ]
-            ]
-            yield Navbar.Item.div [
-              Navbar.Item.IsTab
-              Navbar.Item.IsActive (match model.PageModel with | RulesModel -> true | _ -> false)
-            ] [
-              strong [] [ str "Regeln" ]
-            ]
+        yield! (tabInfos |> List.map toTab)
+
+        //    yield Navbar.Item.a [
+        //      Navbar.Item.IsTab
+        //      Navbar.Item.IsActive (match model.PageModel with | RulesModel _ -> true | _ -> false)
+        //      Navbar.Item.Props [  Href ("#rules/" + s.Id.ToString()) ]
+        //    ] [
+        //      strong [] [ str "Regeln" ]
+        //    ]
       ]
 
       Navbar.End.div [] [

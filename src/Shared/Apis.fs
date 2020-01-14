@@ -9,11 +9,9 @@ module Route =
   let builder typeName methodName =
       sprintf "/api/%s/%s" typeName methodName
 
-type IAuthApi = {
+type IApi = {
   login: Login -> Async<UserData>
-}
-
-type ITournamentApi = {
   createNewTournament: NewTournament -> Async<OpenTournament>
   getAllTournaments: unit -> Async<TournamentForDropDown list>
+  getAllPlayers: unit -> Async<Player list>
 }

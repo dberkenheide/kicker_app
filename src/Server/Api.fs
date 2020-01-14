@@ -1,10 +1,10 @@
-module TournamentApi
+module Api
 
 open System
 open Shared.Dtos
 open Shared.Apis
-open Dapper
 open System.Data
+open Dapper
 open WriteModels
 
 let createNewTournament (connection: IDbConnection) (newTournament : NewTournament) : Async<OpenTournament> = async {
@@ -34,7 +34,9 @@ let getAllTournaments (connection: IDbConnection) (): Async<TournamentForDropDow
   return List.ofSeq ids
 }
 
-let createTournamentApi (connection: IDbConnection) : ITournamentApi = {
+let createApi (connection: IDbConnection): IApi = {
+  login = fun login -> async { return { UserName= "Test"; Token= "42" } }
   createNewTournament = createNewTournament connection
   getAllTournaments = getAllTournaments connection
+  getAllPlayers = (fun () -> async { return [ { PlayerId = 1; Abbreviation = "ABC" }] })
 }

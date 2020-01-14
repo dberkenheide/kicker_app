@@ -33,7 +33,7 @@ let initModel () : Model * Cmd<Msg> =
   }, Cmd.none
 
 let authUser (login: Login) =
-  ServerApi.auth.login login
+  ServerApi.api.login login
 
 let update (msg: InternMsg) model : Model * Cmd<Msg> =
   match msg with

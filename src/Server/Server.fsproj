@@ -12,8 +12,7 @@
     <Compile Include="DataAccess/ReadModels.fs" />
     <Compile Include="DataAccess/WriteModels.fs" />
     <Compile Include="Domain/Tournament.fs" />
-    <Compile Include="Apis/AuthApi.fs" />
-    <Compile Include="Apis/TournamentApi.fs" />
+    <Compile Include="Api.fs" />
     <Compile Include="Server.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

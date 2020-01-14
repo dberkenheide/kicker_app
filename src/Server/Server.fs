@@ -27,22 +27,16 @@ let port =
   "SERVER_PORT"
   |> tryGetEnv |> Option.map uint16 |> Option.defaultValue 8085us
 
-let authApp connection =
+let createApi connection =
   Remoting.createApi()
   |> Remoting.withRouteBuilder Shared.Apis.Route.builder
-  |> Remoting.fromValue AuthApi.authApi
+  |> Remoting.fromValue (Api.createApi connection)
   |> Remoting.buildHttpHandler
 
-let tournamentApp connection =
-  Remoting.createApi()
-  |> Remoting.withRouteBuilder Shared.Apis.Route.builder
-  |> Remoting.fromValue (TournamentApi.createTournamentApi connection)
-  |> Remoting.buildHttpHandler
 
 let app connection = application {
     url ("http://0.0.0.0:" + port.ToString() + "/")
-    use_router (authApp connection)
-    use_router (tournamentApp connection)
+    use_router (createApi connection)
     memory_cache
     use_static publicPath
     use_gzip
