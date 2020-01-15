@@ -18,8 +18,9 @@ type Model = {
 type InternMsg =
   | SetUserName of string
   | SetPassword of string
-  | AuthError of exn
   | LogInClicked
+  | LoginHandled of Result<UserData, string>
+  | ErrorMsgDiscarded
 
 type Msg =
   | Intern of InternMsg
@@ -44,10 +45,17 @@ let update (msg: InternMsg) model : Model * Cmd<Msg> =
       { model with Login = { model.Login with Password = pw } }, Cmd.none
 
   | LogInClicked ->
-      { model with Running = true }, Cmd.OfAsync.either authUser model.Login LoginSuccess (AuthError >> Intern)
+      { model with Running = true }, Cmd.OfAsync.perform authUser model.Login (LoginHandled >> Intern)
 
-  | AuthError exn ->
-      { model with Running = false; ErrorMsg = Some exn.Message }, Cmd.none
+  | LoginHandled loginResult ->
+      match loginResult with
+      | Ok user ->
+          { model with Running = false }, user |> LoginSuccess |> Cmd.ofMsg
+      | Error err ->
+          { model with Running = false; ErrorMsg = Some err }, Cmd.none
+
+  | ErrorMsgDiscarded ->
+      { model with ErrorMsg = None }, Cmd.none
 
 let view (model: Model) (dispatch: Msg -> unit) =
   let buttonIsDisabled m =
@@ -56,7 +64,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
       m.Running
 
   Container.container [ ] [
-    Box.box' [ Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
+    yield Box.box' [ Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
           [ figure [ Class "avatar" ]
               [ img [ Src "/lmis-ag-logo.svg" ] ]
             div [ ]
@@ -80,4 +88,14 @@ let view (model: Model) (dispatch: Msg -> unit) =
                     Button.OnClick (fun _ -> dispatch (LogInClicked |> Intern))
                     Button.Disabled (buttonIsDisabled model) ]
                   [ str "Login" ] ] ]
+
+    match model.ErrorMsg with
+    | Some err ->
+        yield Message.message [ Message.Color IsDanger ]
+          [ Message.header [ ]
+              [ str "Login fehlgeschlagen"
+                Delete.delete [ Delete.OnClick (fun _ -> dispatch (ErrorMsgDiscarded |> Intern)) ] [ ] ]
+            Message.body [ ]
+              [ str err ] ]
+    | None -> ()
   ]

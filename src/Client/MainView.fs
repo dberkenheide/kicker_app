@@ -38,6 +38,7 @@ type Msg =
   | TournamentsLoaded of TournamentForDropDown list
   | TournamentSelected of TournamentForDropDown
   | NewOpenTournament of OpenTournament
+  | Logout
 
 let urlUpdate (result: Page option) (model: Model) =
   match result with
@@ -61,7 +62,7 @@ let urlUpdate (result: Page option) (model: Model) =
   | Some (Page.CreateNew) ->
       let m, c = TournamentCreation.initModel ()
       { model with PageModel = CreationModel m }, c |> Cmd.map CreationMsg
-      
+
   | Some (Page.Preparation s) ->
       let m, c = TournamentPreparation.initModel s
       { model with PageModel = PreparationModel m }, c |> Cmd.map PreaparationMsg
@@ -148,6 +149,8 @@ let update (msg: Msg) (model: Model) =
   | TournamentsLoaded newTournamtes, _ ->
       { model with AllTournaments = newTournamtes }, Cmd.none
 
+  | Logout, _ ->
+      { model with User = None }, Cmd.none
 
 type TabInfo = {
   Page: Page option
@@ -155,7 +158,7 @@ type TabInfo = {
   IsActive: bool
 }
 
-let menuView (model: Model) (dispatch: Msg -> unit) = 
+let menuView (model: Model) (dispatch: Msg -> unit) =
   let toTab tabInfo =
     Navbar.Item.a [
         yield Navbar.Item.IsTab
@@ -163,7 +166,7 @@ let menuView (model: Model) (dispatch: Msg -> unit) =
         match tabInfo.Page with
         | Some p ->
             yield Navbar.Item.Props [ Href (p |> toPath) ]
-        | None -> ()          
+        | None -> ()
       ] [
         strong [] [ str tabInfo.Label ]
       ]
@@ -178,8 +181,8 @@ let menuView (model: Model) (dispatch: Msg -> unit) =
     { Page = mapPage Page.Standing
       Label = "Stand"
       IsActive = (match model.PageModel with | StandingModel _ -> true | _ -> false) }
-  ]    
-  
+  ]
+
   div [] [
     Navbar.navbar [ Navbar.Color IsPrimary; Navbar.CustomClass "mainNavbar" ] [
       Navbar.Brand.div [] [
@@ -190,7 +193,7 @@ let menuView (model: Model) (dispatch: Msg -> unit) =
 
       Navbar.Start.div [] [
         yield Navbar.Item.div [ Navbar.Item.HasDropdown; Navbar.Item.IsHoverable ] [
-          Navbar.Link.a [ ] [ strong [] [ str (match model.SelectedTournament with | Some s -> s.Title | None -> "<leer>") ] ]
+          Navbar.Link.a [ ] [ strong [] [ str (match model.SelectedTournament with | Some s -> s.Title | None -> "kein Turnier ausgewählt") ] ]
           Navbar.Dropdown.div [ ]
             (model.AllTournaments
               |>  List.map (fun c ->
@@ -221,9 +224,15 @@ let menuView (model: Model) (dispatch: Msg -> unit) =
           match model.User with
           | Some u ->
               yield u.UserName
-                    |> sprintf "Angemeldet als %s  "
+                    |> sprintf "Angemeldet als %s"
                     |> str
-              yield Button.a [ Button.IsOutlined; Button.Color IsWhite; Button.Props [ Href "#logout" ] ] [
+              yield div [ Style [ MarginLeft 20. ] ] [ ]
+              yield Button.a [
+                      Button.IsOutlined
+                      Button.Color IsWhite
+                      Button.Props [ Href "#logout" ]
+                      Button.OnClick (fun _ -> dispatch Logout)
+                    ] [
                       str "Logout"
                     ]
           | None ->
@@ -250,7 +259,7 @@ let view (model: Model) (dispatch : Msg -> unit) =
           yield Standing.view standingModel (StandingMsg >> dispatch)
 
       | PreparationModel preparationModel ->
-          yield TournamentPreparation.view preparationModel (PreaparationMsg >> dispatch)        
+          yield TournamentPreparation.view preparationModel (PreaparationMsg >> dispatch)
 
       | CreationModel creationModel ->
           yield TournamentCreation.view creationModel (CreationMsg >> dispatch)

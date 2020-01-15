@@ -62,14 +62,14 @@ let getOrAddUser (ctx: Dbo) (abbreviation: string) = async {
       return u
 }
 
-let getUserData (ctx: Dbo) login: Async<UserData> = async {
+let getUserData (ctx: Dbo) login: Async<Result<UserData, string>> = async {
   match (Ldap.authenticateWithLdap login) with
   | Ok name ->
       let! userData = getOrAddUser ctx name
 
-      return { UserName = userData.Abbreviation; Token= "42" }
+      return Ok { UserName = userData.Abbreviation; Token= "42" }
   | Error err ->
-      return { UserName = err |> Ldap.loginErrorText; Token= "-" }
+      return err |> Ldap.loginErrorText |> Error
 }
 
 let createApi ctx: IApi = {
