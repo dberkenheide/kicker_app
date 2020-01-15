@@ -42,12 +42,34 @@ let getAllPlayers (ctx: Dbo) (): Async<Player list> = async {
   return List.ofSeq playerQuery
 }
 
+let getOrAddUser (ctx: Dbo) (abbreviation: string) = async {
+  let abbreviation = abbreviation.ToUpper()
+
+  let user =
+    query {
+      for p in ctx.Dbo.Player do
+      where (p.Abbreviation = abbreviation)
+      select p
+    } |> Seq.tryHead
+
+  match user with
+  | Some u ->
+      return u
+
+  | None ->
+      let u = ctx.Dbo.Player.``Create(Abbreviation)`` abbreviation
+      do! ctx.SubmitUpdatesAsync()
+      return u
+}
+
 let getUserData (ctx: Dbo) login: Async<UserData> = async {
   match (Ldap.authenticateWithLdap login) with
   | Ok name ->
-      return { UserName = name; Token= "42" }
+      let! userData = getOrAddUser ctx name
+
+      return { UserName = userData.Abbreviation; Token= "42" }
   | Error err ->
-      return { UserName = err; Token= "42" }
+      return { UserName = err |> Ldap.loginErrorText; Token= "-" }
 }
 
 let createApi ctx: IApi = {

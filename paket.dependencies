@@ -4,6 +4,7 @@ group Server
     storage: none
 
     nuget Dapper
+nuget fsharp.compiler.tools
     nuget FSharp.Core
     nuget FSharp.Data.SqlClient
     nuget Microsoft.Data.Sqlite

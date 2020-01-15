@@ -801,6 +801,7 @@ NUGET
     Fable.Remoting.Server (4.9)
       Fable.Remoting.Json (>= 2.5)
       FSharp.Core (>= 4.6.2)
+    fsharp.compiler.tools (10.2.3)
     FSharp.Control.Websockets (0.2.2)
       FSharp.Core (>= 4.3.4)
       Microsoft.IO.RecyclableMemoryStream (>= 1.2.2)

@@ -9,3 +9,4 @@ SQLProvider
 System.Data.SQLClient
 FSharp.Data.SqlClient
 Novell.Directory.Ldap.NETStandard
+fsharp.compiler.tools

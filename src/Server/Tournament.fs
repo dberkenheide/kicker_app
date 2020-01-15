@@ -2,7 +2,6 @@ module Tournament
 
 open System
 open FSharp
-open Shared.ResultBuilder
 open Shared
 
 type TournamentId = TournamentId of int
