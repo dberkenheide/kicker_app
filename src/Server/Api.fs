@@ -104,10 +104,46 @@ let getTournamentPreparationById (ctx: Dbo) (id: int) : AsyncResult<OpenTourname
     }
 }
 
+let saveTournamentPreparation (ctx: Dbo) openTournament = async {
+  let savedTournament = query {
+    for t in ctx.Dbo.Tournament do
+    where (t.Id = openTournament.Id)
+    select (Some t)
+    exactlyOneOrDefault
+  }
+
+  match savedTournament with
+  | Some t ->
+      t.StartDate <- openTournament.StartDate
+      t.Title <- openTournament.Title
+
+      let! _ =
+        query {
+          for t in ctx.Dbo.Teams do
+          where (t.TournamentId = openTournament.Id)
+        } |> Seq.``delete all items from single table``
+
+      for team in openTournament.Teams do
+        let newTeam = ctx.Dbo.Teams.``Create(Name, TournamentId)`` (team.Name, openTournament.Id)
+        newTeam.FirstPlayerId <- team.PlayerOne
+        newTeam.SecondPlayerId <- team.PlayerTwo
+        ()
+
+      ()
+  | None ->
+      ()
+    
+  do! ctx.SubmitUpdatesAsync()
+
+  return ()
+}
+
+
 let createApi ctx: IApi = {
   login = getUserData ctx
   createNewTournament = createNewTournament ctx
   getAllTournaments = getAllTournaments ctx
   getAllPlayers = getAllPlayers ctx
   getTournamentPreparationById = getTournamentPreparationById ctx
+  saveTournamentPreparation = saveTournamentPreparation ctx
 }

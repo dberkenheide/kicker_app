@@ -11,9 +11,10 @@ module Route =
       sprintf "/api/%s/%s" typeName methodName
 
 type IApi = {
-  login: Login -> Async<Result<UserData, string>>
+  login: Login -> AsyncResult<UserData, string>
   createNewTournament: NewTournament -> Async<OpenTournament>
   getAllTournaments: unit -> Async<TournamentForDropDown list>
   getAllPlayers: unit -> Async<Player list>
   getTournamentPreparationById: int -> AsyncResult<OpenTournament, string>
+  saveTournamentPreparation: OpenTournament -> Async<unit>
 }

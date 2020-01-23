@@ -53,7 +53,7 @@ let urlUpdate (result: Page option) (model: Model) =
       { model with PageModel = LoginModel m }, c |> Cmd.map LoginMsg
 
   | Some Page.Home ->
-      { model with PageModel = HomeModel "Can GET/Home" }, Cmd.none //Cmd.map HomePageMsg cmd
+      { model with PageModel = HomeModel "" }, Cmd.none //Cmd.map HomePageMsg cmd
 
   | Some (Page.Standing s) ->
       let m, c = Standing.initModel s
