@@ -142,7 +142,7 @@ let update (msg: Msg) (model: Model) =
       { m with SelectedTournament = Some newId }, c
 
   | NewOpenTournament openTournament, _ ->
-      let newIds = [ { Title = openTournament.Title; Id = openTournament.Id } ]
+      let newIds = [ { Title = openTournament.Title; Id = openTournament.Id; State = TournamentState.PlayOffs } ]
 
       { model with AllTournaments = List.concat [ model.AllTournaments; newIds ]; SelectedTournament = Some newIds.[0] }, Cmd.none
 
@@ -247,7 +247,7 @@ let menuView (model: Model) (dispatch: Msg -> unit) =
 let view (model: Model) (dispatch : Msg -> unit) =
   div [] [
     (menuView model dispatch)
-    div [ CustomStyles.centerStyle "column" ] [
+    div [ ] [
       match model.PageModel with
       | LoginModel loginModel ->
           yield Login.view loginModel (LoginMsg >> dispatch)

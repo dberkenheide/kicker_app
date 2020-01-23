@@ -7,10 +7,15 @@ type Login = {
   Password: string
 }
 
-[<CLIMutable>]
+type TournamentState =
+  | Preparation = 1
+  | Qualifying = 2
+  | PlayOffs = 3
+
 type TournamentForDropDown = {
   Title: string
   Id: int
+  State: TournamentState
 }
 
 type JWT = string
@@ -31,8 +36,9 @@ type Player = {
 }
 
 type Team = {
-  PlayerOne: Player
-  PlayerTwo: Player
+  Name: string
+  PlayerOne: int option
+  PlayerTwo: int option
 }
 
 type OpenTournament = {

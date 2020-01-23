@@ -8,9 +8,35 @@ open Shared.Dtos
 open System
 open Thoth.Json
 
+type TournamentPreparation = {
+  Id: int
+  Name: string
+  StartDate: DateTime
+  Players: Player list
+}
+
+type TournamentQualifying = {
+  Id: int
+  Name: string
+  StartDate: DateTime
+}
+
+type TournamentPlayOffs = {
+  Id: int
+  Name: string
+  StartDate: DateTime
+}
+
+type Tournament =
+  | NoTournament
+  | Preparation of TournamentPreparation
+  | Qualifying of TournamentQualifying
+  | PlayOffs of TournamentPlayOffs
+
 type Model = {
-    ModelId: int
-  }
+  Id: int
+  Tournament: Tournament
+}
 
 type InternMsg =
   | NoMsg
@@ -18,9 +44,10 @@ type InternMsg =
 type Msg =
   | Intern of InternMsg
 
-let initModel s =
+let initModel id =
   {
-    ModelId = s
+    Id = id
+    Tournament = NoTournament
   }, Cmd.none
 
 let update (msg: InternMsg) model : Model * Cmd<Msg> =
@@ -30,5 +57,5 @@ let update (msg: InternMsg) model : Model * Cmd<Msg> =
 
 let view (model: Model) (dispatch: Msg -> unit) =
   strong [] [
-    model.ModelId |> string |> str
+    str ""
   ]

@@ -63,39 +63,50 @@ let view (model: Model) (dispatch: Msg -> unit) =
       String.IsNullOrEmpty m.Login.Password ||
       m.Running
 
-  Container.container [ ] [
-    yield Box.box' [ Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
-          [ figure [ Class "avatar" ]
-              [ img [ Src "/lmis-ag-logo.svg" ] ]
-            div [ ]
-              [ Field.div [ ]
-                  [ Control.div [ ]
-                      [ Input.text
-                          [ Input.Size IsLarge
-                            Input.Placeholder "Dein Kürzel"
-                            Input.OnChange (fun ev -> dispatch (ev.Value |> SetUserName |> Intern))
-                            Input.Props [ AutoFocus true ] ] ] ]
-                Field.div [ ]
-                  [ Control.div [ ]
-                      [ Input.password
-                          [ Input.Size IsLarge
-                            Input.OnChange (fun ev -> dispatch (ev.Value |> SetPassword |> Intern))
-                            Input.Placeholder "Dein Passwort" ] ] ]
+  div [ CustomStyles.centerStyle "column" ] [
+    Container.container [ ]
+      [ yield Box.box' [ Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ] [
+              figure [ Class "avatar" ] [
+                img [ Src "/lmis-ag-logo.svg" ]
+              ]
+              div [] [
+                Field.div [ ] [
+                  Control.div [ ]
+                        [ Input.text
+                            [ Input.Size IsLarge
+                              Input.Placeholder "Dein Kürzel"
+                              Input.OnChange (fun ev -> dispatch (ev.Value |> SetUserName |> Intern))
+                              Input.Props [ AutoFocus true ] ] ] ]
+                Field.div [ ] [
+                  Control.div [ ] [
+                    Input.password  [
+                      Input.Size IsLarge
+                      Input.OnChange (fun ev -> dispatch (ev.Value |> SetPassword |> Intern))
+                      Input.Placeholder "Dein Passwort"
+                    ]
+                  ]
+                ]
                 br [ ]
-                Button.button
-                  [ Button.Color IsPrimary
-                    Button.IsFullWidth
-                    Button.OnClick (fun _ -> dispatch (LogInClicked |> Intern))
-                    Button.Disabled (buttonIsDisabled model) ]
-                  [ str "Login" ] ] ]
+                Button.button [
+                  Button.Color IsPrimary
+                  Button.IsFullWidth
+                  Button.OnClick (fun _ -> dispatch (LogInClicked |> Intern))
+                  Button.Disabled (buttonIsDisabled model)
+                ] [
+                  str "Login"
+                ]
+              ]
+            ]
 
-    match model.ErrorMsg with
-    | Some err ->
-        yield Message.message [ Message.Color IsDanger ]
-          [ Message.header [ ]
-              [ str "Login fehlgeschlagen"
-                Delete.delete [ Delete.OnClick (fun _ -> dispatch (ErrorMsgDiscarded |> Intern)) ] [ ] ]
-            Message.body [ ]
-              [ str err ] ]
-    | None -> ()
-  ]
+        match model.ErrorMsg with
+        | Some err ->
+            yield Message.message [ Message.Color IsDanger ]
+              [ Message.header [] [
+                  str "Login fehlgeschlagen"
+                  Delete.delete [ Delete.OnClick (fun _ -> dispatch (ErrorMsgDiscarded |> Intern)) ] [ ]
+                ]
+                Message.body [ ] [ str err ]
+              ]
+        | None -> ()
+      ]
+    ]

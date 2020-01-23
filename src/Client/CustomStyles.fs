@@ -11,5 +11,5 @@ let centerStyle direction =
           FlexDirection direction
           AlignItems AlignItemsOptions.Center
           JustifyContent "center"
-          Padding "20px 0"
+          Padding "40px 0"
   ]

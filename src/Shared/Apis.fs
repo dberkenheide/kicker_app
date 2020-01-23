@@ -1,6 +1,7 @@
 namespace Shared.Apis
 
 open System
+open Shared
 open Shared.Dtos
 open System.Data
 
@@ -14,4 +15,5 @@ type IApi = {
   createNewTournament: NewTournament -> Async<OpenTournament>
   getAllTournaments: unit -> Async<TournamentForDropDown list>
   getAllPlayers: unit -> Async<Player list>
+  getTournamentPreparationById: int -> AsyncResult<OpenTournament, string>
 }

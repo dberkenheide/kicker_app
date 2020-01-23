@@ -85,44 +85,54 @@ let parseDate stringDate =
   | _ -> None
 
 let view (model: Model) (dispatch: Msg -> unit) =
-  div [ ]
-    [ Field.div [ ]
-        [ Control.div [  ]
-            [ Label.label [] [str "Titel"]
-              Input.text
-                [ Input.Size IsLarge
-                  Input.Placeholder "Titel des Turniers"
-                  Input.OnChange (fun ev -> ev.Value |> SetTitle |> Intern |> dispatch)
-                  Input.Props [ AutoFocus true ] ] ] ]
+  div [ CustomStyles.centerStyle "column"] [
+    div [] [
+      Field.div [] [
+        Control.div [] [
+          Label.label [] [str "Titel"]
+          Input.text [
+            Input.Size IsLarge
+            Input.Placeholder "Titel des Turniers"
+            Input.OnChange (fun ev -> ev.Value |> SetTitle |> Intern |> dispatch)
+            Input.Props [ AutoFocus true ]
+          ]
+        ]
+      ]
 
       br [ ]
-      Field.div [ ]
-        [ Control.div [  ]
-            [ Label.label [] [ str "Startdatum des Turniers"]
-              Input.date
-                [ Input.Size IsLarge
-                  Input.OnChange (fun ev -> ev.Value |> parseDate |> SelectDate |> Intern |> dispatch) ] ] ]
+      Field.div [] [
+        Control.div [] [
+          Label.label [] [ str "Startdatum des Turniers"]
+          Input.date [
+            Input.Size IsLarge
+            Input.OnChange (fun ev -> ev.Value |> parseDate |> SelectDate |> Intern |> dispatch)
+          ]
+        ]
+      ]
       br [ ]
-      Button.button
-        [ Button.Color IsPrimary
-          Button.IsFullWidth
-          Button.OnClick (fun _ -> CreateTournament |> Intern |> dispatch) ]
-        [ str "Erstellen" ]
+      Button.button [
+        Button.Color IsPrimary
+        Button.IsFullWidth
+        Button.OnClick (fun _ -> CreateTournament |> Intern |> dispatch)
+      ] [
+        str "Erstellen"
+      ]
 
       br [ ]
       match model.FailureMessage with
       | Some failure ->
           match failure with
           | ForTitle titleFailure ->
-              Notification.notification [ Notification.Color IsDanger ]
-                [ str titleFailure ]
+              Notification.notification [ Notification.Color IsDanger ] [
+                str titleFailure
+              ]
 
           | ForStartDate dateFailure ->
-              Notification.notification [ Notification.Color IsDanger ]
-                [ str dateFailure ]
+              Notification.notification [ Notification.Color IsDanger ] [
+                str dateFailure
+              ]
       | None ->
           div [] []
-      ]
-
-
+    ]
+  ]
 
